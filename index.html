@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mirrorge24管理ツール</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+</head>
+<body>
+    <div id="mapContainer">
+        <div id="map"></div>
+    </div>
+    <div id="popup" class="popup">
+        <h2>Device Info</h2>
+        <div id="deviceInfo">
+            <dl class="definition-list"></dl>
+        </div>
+        <div>
+            <button id="saveLogButton" class="info">Save Log</button>
+        </div>
+        <div>
+            <button id="grantMarkerHostButton" class="info">Grant Marker Host</button>
+        </div>
+        <div>
+            <button id="revokeMarkerHostButton" class="warn">Revoke Marker Host</button>
+        </div>
+    </div>
+    <div id="informations" class="information">
+        <div id="status">管理サーバーに接続中...</div>
+        <h2 id="coordinates">接続中デバイス: 0</h2>
+        <div>
+            <button id="saveLogAllButton" class="info">Save All Log</button>
+        </div>
+        <div>
+            <button id="startAllButton" class="info">ゲーム開始</button>
+        </div>
+        <div id="devicesArea">
+            <ul id="deviceList">
+            </ul>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
