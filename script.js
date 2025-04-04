@@ -1,87 +1,7 @@
 const deviceLabels = {
-    "E92A520C-C082-44B8-8BD2-B1723C6C1ED6": {
-        "LabelName": "MO-001",
-        "PlayerIndex": 1
-    },
-    "E6EDA704-2DFC-4C33-9567-5788033A51D5": {
-        "LabelName": "MO-002",
-        "PlayerIndex": 2
-    },
-    "5EE0F4AB-9123-4CA5-996F-09EDC85594AC": {
-        "LabelName": "MO-003",
-        "PlayerIndex": 3
-    },
-    "30399681-0A4C-484E-9702-F6321FA2452E": {
-        "LabelName": "MO-004",
-        "PlayerIndex": 4
-    },
-    "A5BE74DA-5E6D-47A6-B982-41E592764D7A": {
-        "LabelName": "MO-005",
-        "PlayerIndex": 5
-    },
-    "E4F635CF-F667-4DC0-B169-6E553697E929": {
-        "LabelName": "MO-006",
-        "PlayerIndex": 6
-    },
-    "C4EFCDF7-0D9E-472D-BAE0-2FDF72404ECF": {
-        "LabelName": "MO-007",
-        "PlayerIndex": 7
-    },
-    "09F7E872-5EB9-444F-869F-89B5F8876ECB": {
-        "LabelName": "MO-008",
-        "PlayerIndex": 8
-    },
-    "25909285-FA26-4AFD-A58D-F72584629787": {
-        "LabelName": "MO-009",
-        "PlayerIndex": 9
-    },
-    "35AF72D1-90E0-4FFD-BF0D-C1383B423E06": {
-        "LabelName": "MO-010",
-        "PlayerIndex": 10
-    },
-    "23C8610F-F4F1-44A9-9472-834ABF8566C9": {
-        "LabelName": "MO-011",
-        "PlayerIndex": 11
-    },
-    "7137F56A-4A21-49B2-BFD4-A990A145C964": {
-        "LabelName": "MO-012",
-        "PlayerIndex": 12
-    },
-    "9D9D3FE6-BFA6-4639-90B6-23463E69DAFC": {
-        "LabelName": "MO-013",
-        "PlayerIndex": 13
-    },
-    "82EC4467-DC68-49D1-A0F2-4937E5147DE3": {
-        "LabelName": "MO-014",
-        "PlayerIndex": 14
-    },
-    "0B51BD0B-E714-4D0D-9825-92C2478DBEE3": {
-        "LabelName": "MO-015",
-        "PlayerIndex": 15
-    },
-    "4B275030-16EF-46FD-8E4D-9421D89A0AAF": {
-        "LabelName": "MO-016",
-        "PlayerIndex": 16
-    },
-    "B3D78251-663E-44D4-B95A-3CF1DCC83A62": {
-        "LabelName": "MO-017",
-        "PlayerIndex": 17
-    },
-    "A8F2328B-2F29-44CE-8838-67BFD0C18890": {
-        "LabelName": "MO-018",
-        "PlayerIndex": 18
-    },
-    "042F7F95-AE29-4ACF-A174-13270C1B0ACD": {
-        "LabelName": "MO-019",
-        "PlayerIndex": 19
-    },
-    "BBC86D95-C306-493B-AECE-D012539F92FC": {
-        "LabelName": "MO-020",
-        "PlayerIndex": 20
-    },
     "B9AC97D8": {
         "LabelName": "Terahata_MacBook",
-        "PlayerIndex": 4
+        "PlayerIndex": 1
     },
     "7E83C0D5": {
         "LabelName": "Terahata_VisionPro",
@@ -97,16 +17,33 @@ const deviceLabels = {
     },
     "B8B55BE0": {
         "LabelName": "MIYA_VisionPro",
-        "PlayerIndex": 1
+        "PlayerIndex": 4
     },
     "E52DC257": {
-        "LabelName": "2_VisionPro",
-        "PlayerIndex": 2
+        "LabelName": "1_VisionPro",
+        "PlayerIndex": 5
     },
     "46D0974F": {
+        "LabelName": "2_VisionPro",
+        "PlayerIndex": 6
+    },
+    "557D3CC6": {
         "LabelName": "3_VisionPro",
-        "PlayerIndex": 3
-    }
+        "PlayerIndex": 7
+    },
+    "3E23DECF": {
+        "LabelName": "4_VisionPro",
+        "PlayerIndex": 8
+    },    
+    "E3895399": {
+        "LabelName": "5_VisionPro",
+        "PlayerIndex": 9
+    },
+    "C1AC3688": {
+        "LabelName": "5_VisionPro",
+        "PlayerIndex": 10
+    },
+
 };
 
 const statusDiv = document.getElementById('status');
