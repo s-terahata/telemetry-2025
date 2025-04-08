@@ -1,51 +1,3 @@
-const deviceLabels = {
-    "B9AC97D8": {
-        "LabelName": "Terahata_MacBook",
-        "PlayerIndex": 1
-    },
-    "7E83C0D5": {
-        "LabelName": "Terahata_VisionPro",
-        "PlayerIndex": 1
-    },
-    "E9F782CD": {
-        "LabelName": "Yanagida_VisionPro",
-        "PlayerIndex": 2
-    },
-    "9F73C957": {
-        "LabelName": "Aoyama_VisionPro",
-        "PlayerIndex": 3
-    },
-    "B8B55BE0": {
-        "LabelName": "MIYA_VisionPro",
-        "PlayerIndex": 4
-    },
-    "E52DC257": {
-        "LabelName": "1_VisionPro",
-        "PlayerIndex": 5
-    },
-    "46D0974F": {
-        "LabelName": "2_VisionPro",
-        "PlayerIndex": 6
-    },
-    "557D3CC6": {
-        "LabelName": "3_VisionPro",
-        "PlayerIndex": 7
-    },
-    "3E23DECF": {
-        "LabelName": "4_VisionPro",
-        "PlayerIndex": 8
-    },    
-    "E3895399": {
-        "LabelName": "5_VisionPro",
-        "PlayerIndex": 9
-    },
-    "C1AC3688": {
-        "LabelName": "5_VisionPro",
-        "PlayerIndex": 10
-    },
-
-};
-
 const statusDiv = document.getElementById('status');
 const coordinatesDiv = document.getElementById('coordinates');
 const deviceList = document.getElementById('deviceList');
@@ -300,12 +252,6 @@ function onMessageArrived(message) {
     const telemetry = JSON.parse(message.payloadString);
     const userId = telemetry.deviceInfo.deviceUniqueIdentifier;
 
-    //if (!(deviceId in deviceLabels)) {
-    //    return;
-    //}
-
-    const playerIndex = deviceLabels[userId] ? deviceLabels[userId].PlayerIndex : 0;
-
     // プレイヤーのタイムアウトタイマーをリセットまたは開始
     resetTimeoutTimer(userId);
 
@@ -336,7 +282,7 @@ function onMessageArrived(message) {
         // プレイヤー番号をマーカーに追加
         const playerNumber = document.createElement('div');
         playerNumber.className = 'player-number';
-        playerNumber.innerText = playerIndex;
+        playerNumber.innerText = playerCount;
         marker.appendChild(playerNumber);
         playerNumber.style.transform = `translate(-50%, -50%) rotate(${-rotation}deg)`;
 
@@ -488,7 +434,7 @@ function animateMarker(marker, from, to, duration = 1000) {
 function createListItem(playerCount, deviceInfo, gameInfo) {
     const itemHeader = document.createElement('h3');
     const deviceId = deviceInfo.deviceUniqueIdentifier;
-    const labelName = deviceLabels[deviceId] ? deviceLabels[deviceId].LabelName : `Unknown ${playerCount}`;
+    const labelName = deviceId;
     itemHeader.innerHTML = labelName;
 
     const itemBody = document.createElement('dl');
@@ -529,7 +475,7 @@ function showDeviceInfo(player) {
     // ヘッダー部分
     const header = popup.querySelector("h2");
     const deviceId = deviceInfo.deviceUniqueIdentifier;
-    const labelName = deviceLabels[deviceId] ? deviceLabels[deviceId].LabelName : `Unknown ${playerCount}`;
+    const labelName = deviceId;
     header.innerHTML = labelName;
 
     // 本文部分
@@ -610,15 +556,15 @@ function applyRotationOffset(x, y, angle, centerX, centerY) {
 // ボタンクリック時の処理を追加
 document.getElementById('startAllButton').addEventListener('click', startAllDevices);
 
+// グローバルにあることを前提に
 function startAllDevices() {
+    let playerIdx = 1;
     Object.keys(players).forEach(userId => {
-        if (userId in deviceLabels) {
-            const playerIndex = deviceLabels[userId].PlayerIndex;
-            const topic = `command/${userId}/start`;
-            const payload = JSON.stringify({ playerIndex: playerIndex });
-            publishMessage(topic, payload);
-            console.log(`メッセージをデバイスID ${userId} に送信しました。トピック: ${topic}, ペイロード: ${payload}`);
-        }
+        const topic = `command/${userId}/start`;
+        const payload = JSON.stringify({ playerIndex: playerIdx });
+        publishMessage(topic, payload);
+        console.log(`メッセージをデバイスID ${userId} に送信しました。トピック: ${topic}, ペイロード: ${payload}`);
+        playerIdx++;
     });
 }
 
