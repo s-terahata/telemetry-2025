@@ -246,6 +246,7 @@ client.connect({
 function publishMessage(topic, payload) {
     const message = new Paho.MQTT.Message(payload);
     message.destinationName = topic;
+    message.qos = 1;
     client.send(message);
     console.log(`メッセージ送信: トピック: ${topic}, ペイロード: ${payload}`);
 }
