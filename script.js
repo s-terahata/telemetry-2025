@@ -568,6 +568,19 @@ function startAllDevices() {
     });
 }
 
+document.getElementById('startTutorialAllButton').addEventListener('click', startTutorialAllDevices);
+
+function startTutorialAllDevices() {
+    let playerIdx = 1;
+    Object.keys(players).forEach(userId => {
+        const topic = `command/${userId}/tutorial`;
+        const payload = JSON.stringify({ playerIndex: playerIdx });
+        publishMessage(topic, payload);
+        console.log(`メッセージをデバイスID ${userId} に送信しました。トピック: ${topic}, ペイロード: ${payload}`);
+        playerIdx++;
+    });
+}
+
 // マーカーホスト権限付与ボタンクリック時の処理
 grantMarkerHostButton.addEventListener('click', () => {
     publishGrantMarkerHostSignal(selectedUserId);
