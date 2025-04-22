@@ -1,52 +1,62 @@
 body {
     margin: 0;
     overflow: hidden;
-    font-family: Arial, sans-serif;
-    background-color: #e5e1e4;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
 }
 
 .no-indent dd {
 }
 
 #mapContainer {
-    width: 100vw; /* 画面全体に広がる */
-    height: 100vh; /* 画面全体に広がる */
+    width: 100vw;
+    height: 100vh;
     position: relative;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #map {
-    width: 234px; /* 固定幅 */
-    height: 342px; /* 固定高さ */
-    position: absolute;
+    width: min(234px, 80vw);
+    height: min(342px, 120vw);
+    position: relative;
     background: url('map.png') no-repeat center center;
-    background-size: contain; /* 固定サイズで表示 */
-    left: 50%; /* 中心に配置 */
-    top: 50%; /* 中心に配置 */
-    transform: translate(-30%, -90%); /* 地図の中心をウィンドウの中心に合わせる */
+    background-size: contain;
     cursor: grab;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: none;
+    left: auto;
+    top: auto;
 }
 
 .marker {
     position: absolute;
-    width: 10px;
-    height: 10px;
-    transform: translate(-50%, -50%); /* アイコンの中心を位置の基準にする */
+    width: min(24px, 8vw);
+    height: min(24px, 8vw);
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
 }
 
-    .marker.selected {
-        filter: hue-rotate(180deg);
-        z-index: 999;
-    }
+.marker.selected {
+    filter: hue-rotate(180deg);
+    z-index: 999;
+    transform: translate(-50%, -50%) scale(1.2);
+}
 
-    .marker.disconnected {
-        filter: grayscale(1.0);
-    }
+.marker.disconnected {
+    filter: grayscale(1.0);
+    opacity: 0.7;
+}
 
 .player-icon {
-    width: 110%;
-    height: 110%;
+    width: 100%;
+    height: 100%;
     position: relative;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .player-number {
@@ -55,56 +65,127 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     color: white;
-    background-color: rgba(255, 0, 0, 1);
+    background-color: #ff4444;
     border-radius: 50%;
-    width: 13px;
-    height: 13px;
+    width: min(20px, 7vw);
+    height: min(20px, 7vw);
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 8px;
+    font-size: min(12px, 4vw);
     font-weight: bold;
     z-index: 1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 #informations {
-    position: absolute;
-    width: 30vw;
-    top: 0px;
-    bottom: 0px;
-    left: 0px;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
     z-index: 1000;
-    padding: 0px;
-    font-size: 0.1em;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+#informations.active {
+    left: 0;
+}
+
+.menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    position: relative;
+}
+
+.menu-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+    flex: 1;
+    text-align: center;
+    padding-right: 40px;
+}
+
+.close-button {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
 .information {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 0px;
-    border-radius: 5px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
 }
 
-.timeline-text {
-    font-size: 0.5em;
+#status {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #2196F3;
+}
+
+#coordinates {
+    font-size: 18px;
+    margin: 10px 0;
+    color: #333;
 }
 
 #deviceList {
-    height: 85vh;
+    height: calc(100vh - 250px);
     overflow-y: auto;
     padding: 0;
     list-style-type: none;
 }
 
-    #deviceList li {
-        background: rgba(255, 255, 255, 0.9);
-        margin: 5px 0 5px 0;
-        padding: 0 5px 0 10px;
-        border: 1px solid #ddd;
-    }
+#deviceList li {
+    background: white;
+    margin: 8px 0;
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
 
-        #deviceList li.selected {
-            background: rgba(173, 216, 230, 0.9);
-        }
+#deviceList li:hover {
+    background: #f8f9fa;
+    transform: translateX(2px);
+}
+
+#deviceList li.selected {
+    background: #e3f2fd;
+    border-color: #2196F3;
+}
 
 .definition-list {
     margin: 0;
@@ -112,67 +193,247 @@ body {
     list-style: none;
 }
 
-    .definition-list dt {
-        font-weight: bold;
-        margin-top: 5px;
-    }
-
-    .definition-list dd {
-        margin-bottom: 5px;
-        margin-left: 0;
-        padding-left: 20px;
-    }
-
-.popup {
-    display: none;
-    position: absolute;
-    height: 50vh;
-    overflow-y: auto;
-    width: 50vw;
-    bottom: 0px;
-    right: 0px;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 5px;
-    border-radius: 5px;
-    z-index: 1001;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    font-size: 0.5em;
+.definition-list dt {
+    font-weight: bold;
+    margin-top: 8px;
+    color: #666;
 }
 
-    .popup h2 {
-        margin: 0 0 5px;
-    }
+.definition-list dd {
+    margin-bottom: 8px;
+    margin-left: 0;
+    padding-left: 20px;
+    color: #333;
+}
 
-    .popup div {
-        margin: 0 0 5px;
-    }
+/* オーバーレイ */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+/* ポップアップ */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(400px, 90vw);
+    max-height: 80vh;
+    background: white;
+    border-radius: 8px;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.popup-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.popup-content {
+    padding: 20px;
+    overflow-y: auto;
+    max-height: calc(80vh - 60px);
+}
+
+.popup .definition-list {
+    margin-bottom: 20px;
+}
+
+.popup .definition-list dt {
+    color: #666;
+    font-size: 14px;
+    margin-top: 12px;
+}
+
+.popup .definition-list dd {
+    color: #333;
+    font-size: 16px;
+    margin: 4px 0 12px 0;
+    padding-left: 0;
+}
 
 button {
     display: inline-block;
     width: 100%;
-    padding: 5px 5px;
-    border-radius: 5px;
+    padding: 12px 15px;
+    border-radius: 6px;
     border: none;
     text-align: center;
     text-decoration: none;
-    font-size: 0.1em;
-    cursor: pointer
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 8px;
 }
 
-    button.info {
-        background-color: #4caf50;
-        color: white;
+button.info {
+    background-color: #4CAF50;
+    color: white;
+}
+
+button.info:hover {
+    background-color: #45a049;
+    transform: translateY(-1px);
+}
+
+button.warn {
+    background-color: #f44336;
+    color: white;
+}
+
+button.warn:hover {
+    background-color: #d32f2f;
+    transform: translateY(-1px);
+}
+
+/* スクロールバーのスタイル */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* ハンバーガーメニューボタン */
+.menu-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 1002;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+
+.menu-button span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background-color: #333;
+    margin: 2px 0;
+    transition: all 0.3s ease;
+}
+
+.menu-button.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.menu-button.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-button.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* スマートフォン向けのメディアクエリ */
+@media screen and (max-width: 375px) {
+    #informations {
+        width: 100%;
     }
 
-        button.info:hover {
-            background-color: #45a049;
-        }
-
-    button.warn {
-        background-color: #ce2525;
-        color: white;
+    .menu-button {
+        top: 10px;
+        left: 10px;
     }
 
-        button.warn:hover {
-            background-color: #9c2727;
-        }
+    .popup {
+        width: 95vw;
+        max-height: 90vh;
+    }
+
+    .popup-content {
+        max-height: calc(90vh - 60px);
+    }
+}
+
+@media screen and (min-width: 768px) {
+    #informations {
+        width: 400px;
+        left: -400px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    #informations {
+        width: 85%;
+        left: -85%;
+    }
+
+    .popup-content {
+        width: 90%;
+        max-width: 350px;
+        padding: 15px;
+    }
+
+    .popup-header h2 {
+        font-size: 16px;
+        padding-right: 35px;
+    }
+
+    .close-button {
+        width: 25px;
+        height: 25px;
+        font-size: 20px;
+    }
+
+    .definition-list dt {
+        font-size: 0.9rem;
+    }
+
+    .definition-list dd {
+        font-size: 0.9rem;
+    }
+
+    .button-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .button-group button {
+        width: 100%;
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+}

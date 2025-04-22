@@ -1,3 +1,4 @@
+// DOM要素の取得
 const statusDiv = document.getElementById('status');
 const coordinatesDiv = document.getElementById('coordinates');
 const deviceList = document.getElementById('deviceList');
@@ -13,6 +14,7 @@ const grantAdminButton = document.getElementById('grantAdminButton');
 const revokeAdminButton = document.getElementById('revokeAdminButton');
 const grantMarkerHostButton = document.getElementById('grantMarkerHostButton');
 const revokeMarkerHostButton = document.getElementById('revokeMarkerHostButton');
+
 // MQTTブローカーのURL
 const mqttBrokerUrl = "wss://x41e9ae7.ala.asia-southeast1.emqxsl.com:8084/mqtt";
 const subscribeTopic = "player/telemetry/#";
@@ -95,6 +97,15 @@ const logData = {};
 
 // 選択されたユーザーID
 let selectedUserId = null;
+
+// メニュー関連の要素を取得
+const menuButton = document.getElementById('menuButton');
+const closeMenuButton = document.getElementById('closeMenuButton');
+const informations = document.getElementById('informations');
+
+// ポップアップ関連の要素を取得
+const overlay = document.getElementById('overlay');
+const closePopupButton = document.getElementById('closePopupButton');
 
 document.addEventListener('gesturestart', function (e) {
     e.preventDefault();
@@ -472,13 +483,10 @@ function updatePlayerCountUI() {
 // デバイス情報の表示
 function showDeviceInfo(player) {
     const deviceInfo = player.deviceInfo;
-    // ヘッダー部分
-    const header = popup.querySelector("h2");
+    const header = popup.querySelector(".popup-header h2");
     const deviceId = deviceInfo.deviceUniqueIdentifier;
-    const labelName = deviceId;
-    header.innerHTML = labelName;
+    header.innerHTML = deviceId;
 
-    // 本文部分
     const body = deviceInfoDiv.querySelector(".definition-list");
     let info = `<dt>デバイスモデル</dt><dd>${deviceInfo.deviceModel}</dd>`;
     info += `<dt>デバイス名</dt><dd>${deviceInfo.deviceName}</dd>`;
@@ -490,14 +498,28 @@ function showDeviceInfo(player) {
     info += `<dt>アプリバージョン</dt><dd>${player.appVersion}</dd>`;
     body.innerHTML = info;
 
-    popup.style.display = 'block';
+    showPopup();
 }
 
-// ポップアップクローズ時の処理
-popup.addEventListener('click', () => {
+// ポップアップを表示する関数
+function showPopup() {
+    popup.style.display = 'block';
+    overlay.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+// ポップアップを非表示にする関数
+function hidePopup() {
     popup.style.display = 'none';
-    selectedUserId = null;
-});
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+// 閉じるボタンのクリックイベント
+closePopupButton.addEventListener('click', hidePopup);
+
+// オーバーレイのクリックイベント
+overlay.addEventListener('click', hidePopup);
 
 // すべてのログ保存ボタンクリック時の処理
 saveLogAllButton.addEventListener('click', saveLogToFileAll);
@@ -581,49 +603,31 @@ function startTutorialAllDevices() {
     });
 }
 
-// マーカーホスト権限付与ボタンクリック時の処理
-grantMarkerHostButton.addEventListener('click', () => {
-    publishGrantMarkerHostSignal(selectedUserId);
-    publishRevokeMarkerHostSignalToOthers(selectedUserId);
+// メニューボタンのクリックイベント
+menuButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    menuButton.classList.toggle('active');
+    informations.classList.toggle('active');
 });
 
-// マーカーホスト権限削除ボタンクリック時の処理
-revokeMarkerHostButton.addEventListener('click', () => {
-    publishRevokeMarkerHostSignal(selectedUserId);
-    //publishGrantMarkerHostSignalToOthers(selectedUserId);
-    publishRevokeMarkerHostSignalToOthers(selectedUserId);
+// 閉じるボタンのクリックイベント
+closeMenuButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    menuButton.classList.remove('active');
+    informations.classList.remove('active');
 });
 
-// マーカーホスト権限付与信号をMQTTで送信
-function publishGrantMarkerHostSignal(userId) {
-    const topic = `command/${userId}/grantMarkerHost`;
-    const payload = JSON.stringify({ action: "grantMarkerHost" });
-    publishMessage(topic, payload);
-    console.log(`プレイヤー ${userId} にマーカーホスト権限を付与しました。トピック: ${topic}, ペイロード: ${payload}`);
-}
+// メニュー以外の領域をクリックしたときにメニューを閉じる
+document.addEventListener('click', (e) => {
+    if (!informations.contains(e.target) && 
+        !menuButton.contains(e.target) && 
+        informations.classList.contains('active')) {
+        menuButton.classList.remove('active');
+        informations.classList.remove('active');
+    }
+});
 
-// マーカーホスト権限削除信号をMQTTで送信
-function publishRevokeMarkerHostSignal(userId) {
-    const topic = `command/${userId}/revokeMarkerHost`;
-    const payload = JSON.stringify({ action: "revokeMarkerHost" });
-    publishMessage(topic, payload);
-    console.log(`プレイヤー ${userId} のマーカーホスト権限を削除しました。トピック: ${topic}, ペイロード: ${payload}`);
-}
-
-// 他のユーザーにマーカーホスト権限削除信号を送信
-function publishRevokeMarkerHostSignalToOthers(excludedUserId) {
-    Object.keys(players).forEach(userId => {
-        if (userId !== excludedUserId) {
-            publishRevokeMarkerHostSignal(userId);
-        }
-    });
-}
-
-// 他のユーザーにマーカーホスト権限付与信号を送信
-function publishGrantMarkerHostSignalToOthers(excludedUserId) {
-    Object.keys(players).forEach(userId => {
-        if (userId !== excludedUserId) {
-            publishGrantMarkerHostSignal(userId);
-        }
-    });
-}
+// メニュー内のクリックイベントの伝播を停止
+informations.addEventListener('click', (e) => {
+    e.stopPropagation();
+});

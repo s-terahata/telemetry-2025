@@ -11,31 +11,21 @@
     <div id="mapContainer">
         <div id="map"></div>
     </div>
-    <div id="popup" class="popup">
-        <h2>Device Info</h2>
-        <div id="deviceInfo">
-            <dl class="definition-list"></dl>
-        </div>
-        <div>
-            <button id="saveLogButton" class="info">Save Log</button>
-        </div>
-        <div>
-            <button id="grantMarkerHostButton" class="info">Grant Marker Host</button>
-        </div>
-        <div>
-            <button id="revokeMarkerHostButton" class="warn">Revoke Marker Host</button>
-        </div>
-    </div>
+    <button id="menuButton" class="menu-button">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
     <div id="informations" class="information">
+        <div class="menu-header">
+            <h2>管理メニュー</h2>
+            <button id="closeMenuButton" class="close-button">×</button>
+        </div>
         <div id="status">管理サーバーに接続中...</div>
         <h2 id="coordinates">接続中デバイス: 0</h2>
-        <div>
+        <div class="button-group">
             <button id="saveLogAllButton" class="info">Save All Log</button>
-        </div>
-        <div>
             <button id="startTutorialAllButton" class="info">チュートリアルを強制開始</button>
-        </div>
-        <div>
             <button id="startAllButton" class="info">ゲーム開始</button>
         </div>
         <div id="devicesArea">
@@ -43,6 +33,21 @@
             </ul>
         </div>
     </div>
+    <div id="popup" class="popup">
+        <div class="popup-header">
+            <h2>Device Info</h2>
+            <button id="closePopupButton" class="close-button">×</button>
+        </div>
+        <div class="popup-content">
+            <div id="deviceInfo">
+                <dl class="definition-list"></dl>
+            </div>
+            <div class="button-group">
+                <button id="saveLogButton" class="info">Save Log</button>
+            </div>
+        </div>
+    </div>
+    <div id="overlay" class="overlay"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <script src="script.js"></script>
 </body>
