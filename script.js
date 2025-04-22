@@ -627,3 +627,61 @@ document.addEventListener('click', (e) => {
 informations.addEventListener('click', (e) => {
     e.stopPropagation();
 });
+
+// タッチ操作の変数
+let touchStartX = 0;
+let touchStartY = 0;
+let lastTouchDistance = 0;
+let initialScale = 1;
+
+// タッチ開始時の処理
+map.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (e.touches.length === 1) {
+        // シングルタッチ - ドラッグ
+        isDragging = true;
+        touchStartX = e.touches[0].clientX - mapX;
+        touchStartY = e.touches[0].clientY - mapY;
+    } else if (e.touches.length === 2) {
+        // マルチタッチ - ピンチズーム
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        lastTouchDistance = Math.hypot(
+            touch2.clientX - touch1.clientX,
+            touch2.clientY - touch1.clientY
+        );
+        initialScale = scale;
+    }
+}, { passive: false });
+
+// タッチ移動時の処理
+map.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (e.touches.length === 1 && isDragging) {
+        // シングルタッチ - ドラッグ
+        mapX = e.touches[0].clientX - touchStartX;
+        mapY = e.touches[0].clientY - touchStartY;
+        changeMapTransform();
+    } else if (e.touches.length === 2) {
+        // マルチタッチ - ピンチズーム
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        const currentDistance = Math.hypot(
+            touch2.clientX - touch1.clientX,
+            touch2.clientY - touch1.clientY
+        );
+        
+        if (lastTouchDistance > 0) {
+            const scaleFactor = currentDistance / lastTouchDistance;
+            scale = Math.min(Math.max(0.5, initialScale * scaleFactor), 5);
+            changeMapTransform();
+        }
+    }
+}, { passive: false });
+
+// タッチ終了時の処理
+map.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    isDragging = false;
+    lastTouchDistance = 0;
+}, { passive: false });
