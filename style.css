@@ -20,8 +20,8 @@ body {
 }
 
 #map {
-    width: min(234px, 80vw);
-    height: min(342px, 120vw);
+    width: min(600px, 100vw);
+    height: min(880px, 100vh);
     position: relative;
     background: url('map.png') no-repeat center center;
     background-size: contain;
@@ -30,14 +30,22 @@ body {
     transform: none;
     left: auto;
     top: auto;
+    transition: transform 0.1s ease;
+}
+
+#map:active {
+    cursor: grabbing;
 }
 
 .marker {
     position: absolute;
-    width: min(24px, 8vw);
-    height: min(24px, 8vw);
+    width: min(32px, 10vw);
+    height: min(32px, 10vw);
     transform: translate(-50%, -50%);
     transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .marker.selected {
@@ -61,18 +69,18 @@ body {
 
 .player-number {
     position: absolute;
-    top: 175%;
+    top: 120%;
     left: 50%;
     transform: translate(-50%, -50%);
     color: white;
     background-color: #ff4444;
     border-radius: 50%;
-    width: min(20px, 7vw);
-    height: min(20px, 7vw);
+    width: min(24px, 8vw);
+    height: min(24px, 8vw);
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: min(12px, 4vw);
+    font-size: min(14px, 5vw);
     font-weight: bold;
     z-index: 1;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);

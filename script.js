@@ -154,16 +154,14 @@ window.addEventListener('resize', () => {
 
 // マップ上でマウスボタン押下時の処理
 map.addEventListener('mousedown', (e) => {
-    return;
     isDragging = true;
     startX = e.clientX - mapX;
     startY = e.clientY - mapY;
-    map.style.cursor = 'グラビング';
+    map.style.cursor = 'grabbing';
 });
 
 // マップ上でマウス移動時の処理
 map.addEventListener('mousemove', (e) => {
-    return;
     if (isDragging) {
         mapX = e.clientX - startX;
         mapY = e.clientY - startY;
@@ -173,14 +171,12 @@ map.addEventListener('mousemove', (e) => {
 
 // マップ上でマウスボタンを離したときの処理
 map.addEventListener('mouseup', () => {
-    return;
     isDragging = false;
-    map.style.cursor = 'グラブ';
+    map.style.cursor = 'grab';
 });
 
 // マップ上でマウスホイールを使用したときの処理
 map.addEventListener('wheel', (e) => {
-    return;
     e.preventDefault();
     const scaleAmount = 0.1;
     scale += e.deltaY > 0 ? -scaleAmount : scaleAmount;
