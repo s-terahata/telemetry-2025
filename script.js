@@ -132,6 +132,10 @@ window.addEventListener('load', () => {
     viewportHeightOrigin = window.innerHeight;
     viewportWidth = window.innerWidth;
     viewportHeight = window.innerHeight;
+    
+    // メニューをデフォルトで開いた状態にする
+    menuButton.classList.add('active');
+    informations.classList.add('active');
 });
 
 // ビューポートのサイズ変更時の処理
