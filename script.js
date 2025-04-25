@@ -51,7 +51,7 @@ function getSequenceName(seconds) {
         return "ドラゴン戦";
     } else if(seconds < 900) {
         return "エンディング";
-    } else if (seconds <= 1500) {
+    } else if (seconds <= 1000) {
         return "体験終了";
     }
 
@@ -472,10 +472,25 @@ function updateListItem(listItem, deviceInfo, gameInfo, sessionName) {
 // リストアイテムのHTML生成
 function createListItemHtml(deviceInfo, gameInfo, sessionName) {
     const sequenceName = getSequenceName(gameInfo.time);
-    let itemText = `<div class="no-indent">タイムライン${formatTime(gameInfo.time)}</dd><div class="no-indent">${sequenceName}</dd>`;
-    itemText += `<div class="no-indent">バッテリー ${(deviceInfo.batteryLevel * 100).toFixed(0)}%</dd>`;
-    itemText += `<div class="no-indent">セッション名: ${sessionName || 'Offline'}</dd>`;
-    //itemText += `<dt>温度状態</dt><dd>${thermalStatusMap[deviceInfo.thermalStatus]}</dd>`;
+    const timelineProgress = Math.min((gameInfo.time / 1000) * 100, 100); // 1500秒を最大値として計算
+    const batteryProgress = deviceInfo.batteryLevel * 100;
+    
+    let itemText = `<div class="no-indent">セッション名: ${sessionName || 'Offline'}</div>`;
+    itemText += `<div class="no-indent">${sequenceName}</div>`;
+    itemText += `<div class="progress-container">
+        <div class="progress-icon"><i class="fas fa-clock"></i></div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" style="width: ${timelineProgress}%"></div>
+            <div class="progress-value">${formatTime(gameInfo.time)}</div>
+        </div>
+    </div>`;
+    itemText += `<div class="progress-container">
+        <div class="progress-icon"><i class="fas fa-battery-full"></i></div>
+        <div class="progress-bar-container">
+            <div class="progress-bar battery-progress" style="width: ${batteryProgress}%"></div>
+            <div class="progress-value">${batteryProgress.toFixed(0)}%</div>
+        </div>
+    </div>`;
     return itemText;
 }
 
