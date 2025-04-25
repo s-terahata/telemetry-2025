@@ -311,7 +311,7 @@ function onMessageArrived(message) {
         map.appendChild(marker);
 
         // リストにデバイス情報を追加
-        const listItem = createListItem(playerCount, telemetry.deviceInfo, telemetry.gameInfo);
+        const listItem = createListItem(playerCount, telemetry.deviceInfo, telemetry.gameInfo, telemetry.sessionName);
         // リストアイテムのクリック処理
         listItem.addEventListener('click', () => {
             onSelectDevice(userId, telemetry.deviceInfo);
@@ -319,14 +319,14 @@ function onMessageArrived(message) {
         deviceList.appendChild(listItem);
 
         // プレイヤー情報を更新
-        players[userId] = { number: playerCount, marker, listItem, x, y, rotation, deviceInfo: telemetry.deviceInfo, appVersion: telemetry.appVersion };
+        players[userId] = { number: playerCount, marker, listItem, x, y, rotation, deviceInfo: telemetry.deviceInfo, appVersion: telemetry.appVersion, sessionName: telemetry.sessionName };
     } else {
         // 既存プレイヤーの情報を更新
         const marker = players[userId].marker;
         animateMarker(marker, players[userId], { x, y, rotation });
         const listItem = players[userId].listItem;
-        updateListItem(listItem, telemetry.deviceInfo, telemetry.gameInfo);
-        players[userId] = { number: players[userId].number, marker, listItem, x, y, rotation, deviceInfo: telemetry.deviceInfo, appVersion: telemetry.appVersion  };
+        updateListItem(listItem, telemetry.deviceInfo, telemetry.gameInfo, telemetry.sessionName);
+        players[userId] = { number: players[userId].number, marker, listItem, x, y, rotation, deviceInfo: telemetry.deviceInfo, appVersion: telemetry.appVersion, sessionName: telemetry.sessionName };
     }
 
     // 現在のユーザーのデバイス情報を表示
@@ -442,7 +442,7 @@ function animateMarker(marker, from, to, duration = 1000) {
 }
 
 // リストアイテムの生成
-function createListItem(playerCount, deviceInfo, gameInfo) {
+function createListItem(playerCount, deviceInfo, gameInfo, sessionName) {
     const itemHeader = document.createElement('h3');
     const deviceId = deviceInfo.deviceUniqueIdentifier;
     const labelName = deviceId;
@@ -450,7 +450,7 @@ function createListItem(playerCount, deviceInfo, gameInfo) {
 
     const itemBody = document.createElement('dl');
     itemBody.classList.add("definition-list");
-    itemBody.innerHTML = createListItemHtml(deviceInfo, gameInfo);
+    itemBody.innerHTML = createListItemHtml(deviceInfo, gameInfo, sessionName);
 
     const listItem = document.createElement('li');
     listItem.classList.add('information');
@@ -461,16 +461,17 @@ function createListItem(playerCount, deviceInfo, gameInfo) {
 }
 
 // リストアイテムの更新
-function updateListItem(listItem, deviceInfo, gameInfo) {
+function updateListItem(listItem, deviceInfo, gameInfo, sessionName) {
     const itemBody = listItem.querySelector(".definition-list");
-    itemBody.innerHTML = createListItemHtml(deviceInfo, gameInfo);
+    itemBody.innerHTML = createListItemHtml(deviceInfo, gameInfo, sessionName);
 }
 
 // リストアイテムのHTML生成
-function createListItemHtml(deviceInfo, gameInfo) {
+function createListItemHtml(deviceInfo, gameInfo, sessionName) {
     const sequenceName = getSequenceName(gameInfo.time);
     let itemText = `<div class="no-indent">タイムライン${formatTime(gameInfo.time)}</dd><div class="no-indent">${sequenceName}</dd>`;
     itemText += `<div class="no-indent">バッテリー ${(deviceInfo.batteryLevel * 100).toFixed(0)}%</dd>`;
+    itemText += `<div class="no-indent">セッション名: ${sessionName || 'Offline'}</dd>`;
     //itemText += `<dt>温度状態</dt><dd>${thermalStatusMap[deviceInfo.thermalStatus]}</dd>`;
     return itemText;
 }
@@ -496,6 +497,7 @@ function showDeviceInfo(player) {
     info += `<dt>バッテリー状態</dt><dd>${batteryStatusMap[deviceInfo.batteryStatus]}</dd>`;
     info += `<dt>温度状態</dt><dd>${thermalStatusMap[deviceInfo.thermalStatus]}</dd>`;
     info += `<dt>アプリバージョン</dt><dd>${player.appVersion}</dd>`;
+    info += `<dt>セッション名</dt><dd>${player.sessionName || 'Offline'}</dd>`;
     body.innerHTML = info;
 
     showPopup();
