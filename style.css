@@ -151,6 +151,34 @@ body {
     margin-bottom: 20px;
 }
 
+.session-filter {
+    margin-bottom: 15px;
+}
+
+.session-filter label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.session-filter select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background-color: white;
+    min-height: 100px;
+}
+
+.session-filter select option {
+    padding: 5px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.session-filter select option:last-child {
+    border-bottom: none;
+}
+
 .information {
     background: white;
     padding: 15px;
@@ -468,5 +496,323 @@ button.warn:hover {
         width: 100%;
         padding: 8px;
         font-size: 0.9rem;
+    }
+}
+
+.confirmation-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.dialog-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 80%;
+    width: 400px;
+    position: relative;
+    z-index: 2001;
+}
+
+.dialog-content p {
+    margin-bottom: 20px;
+    white-space: pre-line;
+}
+
+.session-selection {
+    margin-bottom: 20px;
+}
+
+.session-selection label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.session-selection select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background-color: white;
+    min-height: 100px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.session-selection select option {
+    padding: 8px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.session-selection select option:last-child {
+    border-bottom: none;
+}
+
+.dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.confirm-button, .cancel-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.confirm-button {
+    background-color: #2196F3;
+    color: white;
+}
+
+.cancel-button {
+    background-color: #f44336;
+    color: white;
+}
+
+.confirm-button:hover {
+    background-color: #1976D2;
+}
+
+.cancel-button:hover {
+    background-color: #D32F2F;
+}
+
+/* カスタムポップアップダイアログ */
+.custom-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.custom-dialog {
+    background-color: #2c2c2c;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    width: 80%;
+    max-width: 500px;
+    color: #fff;
+}
+
+.custom-dialog-content {
+    margin-bottom: 20px;
+}
+
+.custom-dialog-message {
+    margin-bottom: 15px;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.custom-dialog-session-select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    background-color: #3c3c3c;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px;
+}
+
+.custom-dialog-session-select:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+.session-option {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    margin-bottom: 5px;
+    background-color: #2c2c2c;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.session-option:hover {
+    background-color: #3c3c3c;
+}
+
+.session-option input[type="checkbox"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.session-option label {
+    flex: 1;
+    cursor: pointer;
+    font-size: 14px;
+    color: #fff;
+}
+
+/* スクロールバーのスタイル */
+.custom-dialog-session-select::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-dialog-session-select::-webkit-scrollbar-track {
+    background: #2c2c2c;
+    border-radius: 3px;
+}
+
+.custom-dialog-session-select::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 3px;
+}
+
+.custom-dialog-session-select::-webkit-scrollbar-thumb:hover {
+    background: #666;
+}
+
+/* モバイル向けの調整 */
+@media screen and (max-width: 480px) {
+    .custom-dialog {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .session-option {
+        padding: 12px;
+    }
+
+    .session-option input[type="checkbox"] {
+        width: 24px;
+        height: 24px;
+    }
+
+    .session-option label {
+        font-size: 16px;
+    }
+
+    .custom-dialog-button {
+        padding: 12px 20px;
+        font-size: 16px;
+    }
+
+    .custom-dialog-session-select {
+        padding: 15px;
+        font-size: 18px;
+    }
+}
+
+.custom-dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.custom-dialog-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.custom-dialog-confirm {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.custom-dialog-confirm:hover {
+    background-color: #45a049;
+}
+
+.custom-dialog-cancel {
+    background-color: #f44336;
+    color: white;
+}
+
+.custom-dialog-cancel:hover {
+    background-color: #da190b;
+}
+
+.device-list-container {
+    margin-top: 15px;
+    max-height: 150px;
+    overflow-y: auto;
+    background-color: #2c2c2c;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.device-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.device-list-item {
+    padding: 8px;
+    border-bottom: 1px solid #444;
+    color: #fff;
+    font-size: 14px;
+}
+
+.device-list-item:last-child {
+    border-bottom: none;
+}
+
+/* スクロールバーのスタイル */
+.device-list-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.device-list-container::-webkit-scrollbar-track {
+    background: #2c2c2c;
+    border-radius: 3px;
+}
+
+.device-list-container::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 3px;
+}
+
+.device-list-container::-webkit-scrollbar-thumb:hover {
+    background: #666;
+}
+
+/* モバイル向けの調整 */
+@media screen and (max-width: 480px) {
+    .device-list-container {
+        max-height: 200px;
+    }
+
+    .device-list-item {
+        padding: 12px;
+        font-size: 16px;
     }
 }

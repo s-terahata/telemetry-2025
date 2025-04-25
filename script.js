@@ -6,8 +6,6 @@ const map = document.getElementById('map');
 const mapContainer = document.getElementById('mapContainer');
 const popup = document.getElementById('popup');
 const deviceInfoDiv = document.getElementById('deviceInfo');
-const saveLogButton = document.getElementById('saveLogButton');
-const saveLogAllButton = document.getElementById('saveLogAllButton');
 const forceStopButton = document.getElementById('forceStopButton');
 const mapInfoDiv = document.getElementById('mapInfo');
 const grantAdminButton = document.getElementById('grantAdminButton');
@@ -106,6 +104,8 @@ const informations = document.getElementById('informations');
 // ポップアップ関連の要素を取得
 const overlay = document.getElementById('overlay');
 const closePopupButton = document.getElementById('closePopupButton');
+
+const selectedSessions = new Set();
 
 document.addEventListener('gesturestart', function (e) {
     e.preventDefault();
@@ -320,6 +320,7 @@ function onMessageArrived(message) {
 
         // プレイヤー情報を更新
         players[userId] = { number: playerCount, marker, listItem, x, y, rotation, deviceInfo: telemetry.deviceInfo, appVersion: telemetry.appVersion, sessionName: telemetry.sessionName };
+        updateSessionList(); // セッションリストを更新
     } else {
         // 既存プレイヤーの情報を更新
         const marker = players[userId].marker;
@@ -327,6 +328,7 @@ function onMessageArrived(message) {
         const listItem = players[userId].listItem;
         updateListItem(listItem, telemetry.deviceInfo, telemetry.gameInfo, telemetry.sessionName);
         players[userId] = { number: players[userId].number, marker, listItem, x, y, rotation, deviceInfo: telemetry.deviceInfo, appVersion: telemetry.appVersion, sessionName: telemetry.sessionName };
+        updateSessionList(); // セッションリストを更新
     }
 
     // 現在のユーザーのデバイス情報を表示
@@ -402,6 +404,7 @@ function removePlayer(userId) {
         delete timeoutTimers[userId];
         playerCount--;
         updatePlayerCountUI();
+        updateSessionList(); // セッションリストを更新
     }
 }
 
@@ -523,39 +526,6 @@ closePopupButton.addEventListener('click', hidePopup);
 // オーバーレイのクリックイベント
 overlay.addEventListener('click', hidePopup);
 
-// すべてのログ保存ボタンクリック時の処理
-saveLogAllButton.addEventListener('click', saveLogToFileAll);
-
-// ログ保存ボタンクリック時の処理
-saveLogButton.addEventListener('click', () => {
-    const saveTime = new Date();
-    const saveTimeString = saveTime.toISOString().replace(/[:.]/g, '-');
-    saveLogToFile(selectedUserId, saveTimeString);
-});
-
-// すべてのユーザーのログを保存
-function saveLogToFileAll() {
-    const saveTime = new Date();
-    const saveTimeString = saveTime.toISOString().replace(/[:.]/g, '-');
-    
-    Object.keys(logData).forEach(userId => {
-        saveLogToFile(userId, saveTimeString);
-    });
-}
-
-// 指定したユーザーのログを保存
-function saveLogToFile(userId, timeString) {
-    const logContent = logData[userId].join('\n');
-    const logFileName = `mqtt_log_${userId}_${timeString}.txt`;
-    const blob = new Blob([logContent], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = logFileName;
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
 function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -577,32 +547,22 @@ function applyRotationOffset(x, y, angle, centerX, centerY) {
     return { x: rotatedX, y: rotatedY };
 }
 
-// ボタンクリック時の処理を追加
-document.getElementById('startAllButton').addEventListener('click', startAllDevices);
-
-// グローバルにあることを前提に
-function startAllDevices() {
-    let playerIdx = 1;
-    Object.keys(players).forEach(userId => {
-        const topic = `command/${userId}/start`;
-        const payload = JSON.stringify({ playerIndex: playerIdx });
-        publishMessage(topic, payload);
-        console.log(`メッセージをデバイスID ${userId} に送信しました。トピック: ${topic}, ペイロード: ${payload}`);
-        playerIdx++;
+// セッション名の更新
+function updateSessionList() {
+    const sessions = new Set();
+    Object.values(players).forEach(player => {
+        // セッション名が存在する場合のみ追加
+        if (player.sessionName !== undefined && player.sessionName !== null) {
+            sessions.add(player.sessionName);
+        }
     });
-}
-
-document.getElementById('startTutorialAllButton').addEventListener('click', startTutorialAllDevices);
-
-function startTutorialAllDevices() {
-    let playerIdx = 1;
-    Object.keys(players).forEach(userId => {
-        const topic = `command/${userId}/tutorial`;
-        const payload = JSON.stringify({ playerIndex: playerIdx });
-        publishMessage(topic, payload);
-        console.log(`メッセージをデバイスID ${userId} に送信しました。トピック: ${topic}, ペイロード: ${payload}`);
-        playerIdx++;
-    });
+    
+    // セッションが存在しない場合のみ空のセッションを追加
+    if (sessions.size === 0) {
+        sessions.add('');
+    }
+    
+    return Array.from(sessions);
 }
 
 // メニューボタンのクリックイベント
@@ -691,3 +651,159 @@ map.addEventListener('touchend', (e) => {
     isDragging = false;
     lastTouchDistance = 0;
 }, { passive: false });
+
+// 確認ダイアログを表示する関数
+function showConfirmationDialog(message, sessions, callback) {
+    // オーバーレイとダイアログの作成
+    const overlay = document.createElement('div');
+    overlay.className = 'custom-dialog-overlay';
+    
+    const dialog = document.createElement('div');
+    dialog.className = 'custom-dialog';
+    
+    // ダイアログの内容
+    dialog.innerHTML = `
+        <div class="custom-dialog-content">
+            <div class="custom-dialog-message">${message}</div>
+            <select class="custom-dialog-session-select">
+                <option value="">セッションを選択してください</option>
+                ${sessions.map(session => `<option value="${session}">${session || 'Offline'}</option>`).join('')}
+            </select>
+            <div class="device-list-container" style="display: none;">
+                <div class="device-list-title">送信対象デバイス:</div>
+                <ul class="device-list"></ul>
+            </div>
+        </div>
+        <div class="custom-dialog-buttons">
+            <button class="custom-dialog-button custom-dialog-cancel">キャンセル</button>
+            <button class="custom-dialog-button custom-dialog-confirm">送信</button>
+        </div>
+    `;
+    
+    // デバイスリストコンテナーの参照を取得
+    const deviceListContainer = dialog.querySelector('.device-list-container');
+    const deviceList = dialog.querySelector('.device-list');
+    
+    // セッション選択のイベントリスナー
+    dialog.querySelector('.custom-dialog-session-select').addEventListener('change', (e) => {
+        e.stopPropagation();
+        const selectedSession = e.target.value;
+        
+        // デバイスリストを更新
+        deviceList.innerHTML = '';
+        const filteredPlayers = Object.entries(players).filter(([_, player]) => 
+            (player.sessionName || '') === selectedSession
+        );
+        
+        if (filteredPlayers.length > 0) {
+            filteredPlayers.forEach(([userId, _]) => {
+                const li = document.createElement('li');
+                li.className = 'device-list-item';
+                li.textContent = userId;
+                deviceList.appendChild(li);
+            });
+            deviceListContainer.style.display = 'block';
+        } else {
+            deviceListContainer.style.display = 'none';
+        }
+    });
+    
+    // ダイアログをオーバーレイに追加
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+    
+    // 背面の操作を禁止
+    document.body.style.overflow = 'hidden';
+    
+    // キャンセルボタンのイベントリスナー
+    dialog.querySelector('.custom-dialog-cancel').addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.body.removeChild(overlay);
+        document.body.style.overflow = '';
+        callback(false, []);
+    });
+    
+    // 送信ボタンのイベントリスナー
+    dialog.querySelector('.custom-dialog-confirm').addEventListener('click', (e) => {
+        e.stopPropagation();
+        const selectElement = dialog.querySelector('.custom-dialog-session-select');
+        const selectedIndex = selectElement.selectedIndex;
+        
+        // デフォルトの選択肢（「セッションを選択してください」）が選択されている場合のみアラートを表示
+        if (selectedIndex === 0) {
+            alert('セッションを選択してください');
+            return;
+        }
+        
+        const selectedSession = selectElement.value;
+        document.body.removeChild(overlay);
+        document.body.style.overflow = '';
+        callback(true, [selectedSession]);
+    });
+    
+    // ダイアログのクリックイベント
+    dialog.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+    
+    // オーバーレイクリックでダイアログを閉じる
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            document.body.removeChild(overlay);
+            document.body.style.overflow = '';
+            callback(false, []);
+        }
+    });
+}
+
+// ゲーム開始ボタンの処理を更新
+document.getElementById('startAllButton').addEventListener('click', () => {
+    const sessions = updateSessionList();
+    const message = 'ゲーム開始コマンドを送信します。\n送信先セッションを選択してください。';
+    showConfirmationDialog(message, sessions, (confirmed, selectedSessions) => {
+        if (confirmed && selectedSessions.length > 0) {
+            const filteredPlayers = Object.keys(players).filter(userId => 
+                selectedSessions.includes(players[userId].sessionName || '')
+            );
+            startAllDevices(filteredPlayers);
+        }
+    });
+});
+
+// チュートリアル開始ボタンの処理を更新
+document.getElementById('startTutorialAllButton').addEventListener('click', () => {
+    const sessions = updateSessionList();
+    const message = 'チュートリアル開始コマンドを送信します。\n送信先セッションを選択してください。';
+    showConfirmationDialog(message, sessions, (confirmed, selectedSessions) => {
+        if (confirmed && selectedSessions.length > 0) {
+            const filteredPlayers = Object.keys(players).filter(userId => 
+                selectedSessions.includes(players[userId].sessionName || '')
+            );
+            startTutorialAllDevices(filteredPlayers);
+        }
+    });
+});
+
+// ゲーム開始関数を更新
+function startAllDevices(filteredPlayers) {
+    let playerIdx = 1;
+    filteredPlayers.forEach(userId => {
+        const topic = `command/${userId}/start`;
+        const payload = JSON.stringify({ playerIndex: playerIdx });
+        publishMessage(topic, payload);
+        console.log(`メッセージをデバイスID ${userId} に送信しました。トピック: ${topic}, ペイロード: ${payload}`);
+        playerIdx++;
+    });
+}
+
+// チュートリアル開始関数を更新
+function startTutorialAllDevices(filteredPlayers) {
+    let playerIdx = 1;
+    filteredPlayers.forEach(userId => {
+        const topic = `command/${userId}/tutorial`;
+        const payload = JSON.stringify({ playerIndex: playerIdx });
+        publishMessage(topic, payload);
+        console.log(`メッセージをデバイスID ${userId} に送信しました。トピック: ${topic}, ペイロード: ${payload}`);
+        playerIdx++;
+    });
+}

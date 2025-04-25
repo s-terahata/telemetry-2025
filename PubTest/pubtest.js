@@ -8,13 +8,13 @@ const pollingList = document.getElementById('pollingList')
 const userAgentID = navigator.userAgent + "_" + new Date().getTime();
 const encoder = new TextEncoder();
 
-const brokerUrl = "wss://m8f92daf.ala.asia-southeast1.emqxsl.com:8084/mqtt"
+const brokerUrl = "wss://x41e9ae7.ala.asia-southeast1.emqxsl.com:8084/mqtt"
 const topicRoot = "player/telemetry/"
 
-// ƒ|[ƒŠƒ“ƒO‚ÌŠÔŠu[ms]
+// ï¿½|ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½ÌŠÔŠu[ms]
 const pollingInterval = 1000
 
-// ƒoƒbƒeƒŠ[ó‘Ô
+// ï¿½oï¿½bï¿½eï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½
 const batteryStatusMap = {
     "0": "Unknown",
     "1": "Charging",
@@ -23,7 +23,7 @@ const batteryStatusMap = {
     "4": "Full"
 };
 
-// ”Mó‘Ô
+// ï¿½Mï¿½ï¿½ï¿½
 const thermalStatusMap = {
     "-1": "Unknown",
     "0": "Nominal",
@@ -32,12 +32,12 @@ const thermalStatusMap = {
     "3": "Critical"
 };
 
-// ƒvƒŒƒCƒ„[”
+// ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½
 let playerCount;
-// ƒvƒŒƒCƒ„[î•ñˆê——
+// ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ê——
 const players = {}
 
-// MQTTƒNƒ‰ƒCƒAƒ“ƒg–{‘Ì
+// MQTTï¿½Nï¿½ï¿½ï¿½Cï¿½Aï¿½ï¿½ï¿½gï¿½{ï¿½ï¿½
 const client = new Paho.MQTT.Client(brokerUrl, userAgentID);
 
 client.onConnectionLost = onConnectionLost;
@@ -48,19 +48,19 @@ client.connect({
     password: "tyffon1111",
 });
 
-// Ú‘±Š®—¹
+// ï¿½Ú‘ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 function onConnect() {
     console.log("Connected to MQTT broker");
     statusDiv.innerHTML = "Connected to MQTT broker";
 }
 
-// Ú‘±¸”s
+// ï¿½Ú‘ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½
 function onFailure(responseObject) {
     console.log("Failed to connect to MQTT broker: " + responseObject.errorMessage);
     statusDiv.innerHTML = "Failed to connect to MQTT broker: " + responseObject.errorMessage;
 }
 
-// Ø’f
+// ï¿½Ø’fï¿½ï¿½
 function onConnectionLost(responseObject) {
     if (responseObject.errorCode !== 0) {
         console.log("Connection lost: " + responseObject.errorMessage);
@@ -68,7 +68,7 @@ function onConnectionLost(responseObject) {
     }
 }
 
-// ƒƒbƒZ[ƒW‚Ì‘—M
+// ï¿½ï¿½ï¿½bï¿½Zï¿½[ï¿½Wï¿½Ì‘ï¿½ï¿½M
 function publishMessage(topic, payload) {
     const message = new Paho.MQTT.Message(payload);
     message.destinationName = topic;
@@ -76,56 +76,56 @@ function publishMessage(topic, payload) {
     // console.log(`Message published: Topic: ${topic}, Payload: ${payload}`)
 }
 
-// ƒƒbƒZ[ƒWƒ|[ƒŠƒ“ƒO—p
+// ï¿½ï¿½ï¿½bï¿½Zï¿½[ï¿½Wï¿½|ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½p
 let pollingPublishMessage = null;
 
-// ƒ|[ƒŠƒ“ƒOŠJn
+// ï¿½|ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½Jï¿½n
 function startPolling() {
-    // ƒ{ƒ^ƒ“ó‘Ô‚ğØ‚è‘Ö‚¦
+    // ï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½Ø‚ï¿½Ö‚ï¿½
     pollingStatusDiv.innerHTML = "Polling Started";
     pollingStartButton.disabled = !pollingStartButton.disabled;
     pollingStopButton.disabled = !pollingStopButton.disabled;
-    // î•ñ¶¬
+    // ï¿½ï¿½ñ¶ï¿½
     playerCount = parseInt(pollingCountInput.value);
     createPollingInfo(playerCount);
-    // ƒƒbƒZ[ƒWŒÄ‚Ño‚µŠJn
+    // ï¿½ï¿½ï¿½bï¿½Zï¿½[ï¿½Wï¿½Ä‚Ñoï¿½ï¿½ï¿½Jï¿½n
     publishDeviceMessage();
 }
 
-// ƒ|[ƒŠƒ“ƒOI—¹
+// ï¿½|ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½Iï¿½ï¿½
 function stopPolling() {
-    // ƒƒbƒZ[ƒWŒÄ‚Ño‚µ‚ğ’â~
+    // ï¿½ï¿½ï¿½bï¿½Zï¿½[ï¿½Wï¿½Ä‚Ñoï¿½ï¿½ï¿½ï¿½ï¿½~
     clearTimeout(pollingPublishMessage);
     pollingPublishMessage = null;
-    // î•ñ‚ğíœ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½íœ
     Object.keys(players).forEach(key => {
         pollingList.removeChild(pollingList.querySelector(`#${key}`));
         delete players[key];
     })
-    // ƒ{ƒ^ƒ“ó‘Ô‚ğØ‚è‘Ö‚¦
+    // ï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½Ø‚ï¿½Ö‚ï¿½
     pollingStartButton.disabled = !pollingStartButton.disabled;
     pollingStopButton.disabled = !pollingStopButton.disabled;
     pollingStatusDiv.innerHTML = "Polling Stopped.";
 }
 
-// ƒ|[ƒŠƒ“ƒOî•ñ‚ğì¬
+// ï¿½|ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½ì¬
 function createPollingInfo(count) {
     for (let i = 1; i < count + 1; i++) {
         const uid = `uid${i}`;
 
-        // ƒfƒoƒCƒXî•ñ‚ğì¬
+        // ï¿½fï¿½oï¿½Cï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½ì¬
         const batteryLevel = Math.random();
         const batteryStatus = Math.floor(Math.random() * 4) + 1;
         const thermal = Math.floor(Math.random() * 4);
         const deviceInfo = createDeviceInfo(batteryLevel, batteryStatus, thermal, "Test Vision Pro", `Test ${i}`, uid, "MacOS");
         const gameInfo = createGameInfo();
-        // ˆÊ’uî•ñ‚ğì¬
+        // ï¿½Ê’uï¿½ï¿½ï¿½ï¿½ï¿½ì¬
         const posX = (Math.random() - 0.5) * 200.0;
         const posY = (Math.random() - 0.5) * 100.0;
         const angle = Math.random() * 360;
         players[uid] = { posX, posY, angle, deviceInfo, gameInfo };
 
-        // ƒŠƒXƒg‚É—v‘f‚ğ’Ç‰Á
+        // ï¿½ï¿½ï¿½Xï¿½gï¿½É—vï¿½fï¿½ï¿½Ç‰ï¿½
         const itemHeader = document.createElement('h3');
         itemHeader.innerText = `Player ${i}`;
 
@@ -137,20 +137,20 @@ function createPollingInfo(count) {
         listItem.appendChild(itemHeader);
         listItem.appendChild(itemBody);
 
-        // ƒŠƒXƒg€–Ú‚ğ’Ç‰Á
+        // ï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½Ú‚ï¿½Ç‰ï¿½
         pollingList.appendChild(listItem);
     }
 }
 
-// ƒƒbƒZ[ƒW‚Ìì¬
+// ï¿½ï¿½ï¿½bï¿½Zï¿½[ï¿½Wï¿½Ìì¬
 function publishDeviceMessage() {
-    // ƒƒbƒZ[ƒW‘—Mˆ—
+    // ï¿½ï¿½ï¿½bï¿½Zï¿½[ï¿½Wï¿½ï¿½ï¿½Mï¿½ï¿½ï¿½ï¿½
     Object.keys(players).forEach(key => {
-        // ƒgƒsƒbƒNì¬
+        // ï¿½gï¿½sï¿½bï¿½Nï¿½ì¬
         const topic = topicRoot + key;
         const player = players[key];
 
-        // ƒ‰ƒ“ƒ_ƒ€ˆÚ“®
+        // ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½Ú“ï¿½
         const diffX = (Math.random() - 0.5) * 10.0;
         const diffY = (Math.random() - 0.5) * 10.0;
         const diffAngle = Math.atan2(diffX, diffY) * 180 / Math.PI;
@@ -158,20 +158,20 @@ function publishDeviceMessage() {
         player.posY += diffY;
         player.angle = diffAngle;
 
-        // ƒyƒCƒ[ƒh‚ğì¬
+        // ï¿½yï¿½Cï¿½ï¿½ï¿½[ï¿½hï¿½ï¿½ï¿½ì¬
         const payload = createPayloadBytes(player.posX, player.posY, player.angle, player.deviceInfo, player.gameInfo);
         publishMessage(topic, payload);
 
-        // •\¦î•ñ‚ğXV
+        // ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½V
         const listItem = pollingList.querySelector(`#${key}`);
         const itemBody = listItem.querySelector('dl');
         itemBody.innerHTML = createListItemBodyHtml(key);
     });
-    // Ÿ‚ÌƒƒbƒZ[ƒW‘—M‚ğƒXƒPƒWƒ…[ƒ‹
+    // ï¿½ï¿½ï¿½Ìƒï¿½ï¿½bï¿½Zï¿½[ï¿½Wï¿½ï¿½ï¿½Mï¿½ï¿½ï¿½Xï¿½Pï¿½Wï¿½ï¿½ï¿½[ï¿½ï¿½
     pollingPublishMessage = setTimeout(publishDeviceMessage, pollingInterval);
 }
 
-// ƒŠƒXƒg€–Ú‚Ì’†g‚ğì¬
+// ï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½Ú‚Ì’ï¿½ï¿½gï¿½ï¿½ï¿½ì¬
 function createListItemBodyHtml(uid) {
     const player = players[uid];
     let bodyHtml = `<dt>Position</dt><dd>(${player.posX}, ${player.posY})</dd>`
@@ -186,7 +186,7 @@ function createListItemBodyHtml(uid) {
     return bodyHtml;
 }
 
-// ƒfƒoƒCƒXî•ñ‚Ìì¬
+// ï¿½fï¿½oï¿½Cï¿½Xï¿½ï¿½ï¿½Ìì¬
 function createDeviceInfo(batteryLevel, batteryStatus, thermalStatus, model, name, uid, os) {
     return {
         batteryLevel: batteryLevel,
@@ -206,7 +206,7 @@ function createGameInfo() {
     }
 }
 
-// ˆÊ’uî•ñ‚ÌJSON‚Ìì¬
+// ï¿½Ê’uï¿½ï¿½ï¿½ï¿½JSONï¿½Ìì¬
 function createPayloadBytes(posX, posY, angle, deviceInfo, gameInfo) {
     const telemetry = {
         posX: posX,
@@ -214,6 +214,8 @@ function createPayloadBytes(posX, posY, angle, deviceInfo, gameInfo) {
         angle: angle,
         deviceInfo: deviceInfo,
         gameInfo: gameInfo,
+        appVersion : "test",
+        sessionName : "ABCS"
     };
     const jsonString = JSON.stringify(telemetry)
     return encoder.encode(jsonString)
