@@ -612,16 +612,6 @@ menuButton.addEventListener('click', (e) => {
     informations.classList.toggle('active');
 });
 
-// メニュー以外の領域をクリックしたときにメニューを閉じる
-document.addEventListener('click', (e) => {
-    if (!informations.contains(e.target) && 
-        !menuButton.contains(e.target) && 
-        informations.classList.contains('active')) {
-        menuButton.classList.remove('active');
-        informations.classList.remove('active');
-    }
-});
-
 // メニュー内のクリックイベントの伝播を停止
 informations.addEventListener('click', (e) => {
     e.stopPropagation();
