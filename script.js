@@ -460,7 +460,21 @@ function createListItem(playerCount, deviceInfo, gameInfo, sessionName) {
     const itemHeader = document.createElement('h3');
     const deviceId = deviceInfo.deviceUniqueIdentifier;
     const labelName = deviceId;
-    itemHeader.innerHTML = labelName;
+
+    // OSに応じたアイコンを決定
+    let platformIcon = 'fa-question-circle'; // デフォルト
+    const os = deviceInfo.operatingSystem.toLowerCase();
+    if (os.includes('vision')) {
+        platformIcon = 'fa-vr-cardboard';
+    } else if (os.includes('ios')) {
+        platformIcon = 'fa-mobile-alt';
+    } else if (os.includes('mac')) {
+        platformIcon = 'fa-laptop';
+    } else if (os.includes('windows')) {
+        platformIcon = 'fa-windows';
+    }
+
+    itemHeader.innerHTML = `<i class="fas ${platformIcon}"></i> ${labelName}`;
 
     const itemBody = document.createElement('dl');
     itemBody.classList.add("definition-list");
@@ -482,9 +496,8 @@ function updateListItem(listItem, deviceInfo, gameInfo, sessionName) {
 
 // リストアイテムのHTML生成
 function createListItemHtml(deviceInfo, gameInfo, sessionName) {
-    console.log(gameInfo.status);
     const sequenceName = getSequenceName(gameInfo.time, gameInfo.status);
-    const timelineProgress = Math.min((gameInfo.time / 1000) * 100, 100); // 1500秒を最大値として計算
+    const timelineProgress = Math.min((gameInfo.time / 1000) * 100, 100);
     const batteryProgress = deviceInfo.batteryLevel * 100;
     
     let itemText = `<div class="no-indent"><i class="fas fa-door-open"></i> ${sessionName || 'Offline'}</div>`;
