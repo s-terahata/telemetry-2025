@@ -36,25 +36,36 @@ function getLastThreeDigits(label) {
     return ""; // 数字が見つからない場合は"未定義"
 }
 
-function getSequenceName(seconds) {
+function getSequenceName(seconds, status) {
+    seconds -= 45; //MainTimelineの開始位置がオフセットされているため
+
+    if(status == "Playing"){
+    if (seconds <= 83) {
+        return "チュートリアル";
+    } else if (seconds <= 300) {
+        return "フリーローム";
+    } else if (seconds >= 301 && seconds <= 380) {
+        return "ゆがみ襲来";
+    } else if(seconds <= 410) {
+        return "ポータルをつくる";
+    } else if(seconds <= 595) {
+        return "ミニライド";
+    } else if(seconds < 680) {
+        return "ファイナルライド前";
+    } else if (seconds <= 860) {
+        return "ファイナルライド";
+    } else if (seconds <= 1000) {
+        return "エンディング";
+    }
+}
+else
+{
     if (seconds <= 0) {
         return "カートタッチ前";
-    } else if (seconds <= 145) {
-        return "チュートリアル";
-    } else if (seconds <= 380) {
-        return "フリーローム";
-    } else if (seconds >= 370 && seconds <= 389) {
-        return "魔法陣待機中";
-    } else if(seconds <= 490) {
-        return "ドラゴン襲来";
-    } else if(seconds <= 700) {
-        return "ドラゴン戦";
-    } else if(seconds < 900) {
-        return "エンディング";
-    } else if (seconds <= 1000) {
-        return "体験終了";
+    } else {
+        return "開始コマンド待機中"
     }
-
+}
     return "不明なシーケンス";
 }
 
@@ -471,7 +482,8 @@ function updateListItem(listItem, deviceInfo, gameInfo, sessionName) {
 
 // リストアイテムのHTML生成
 function createListItemHtml(deviceInfo, gameInfo, sessionName) {
-    const sequenceName = getSequenceName(gameInfo.time);
+    console.log(gameInfo.status);
+    const sequenceName = getSequenceName(gameInfo.time, gameInfo.status);
     const timelineProgress = Math.min((gameInfo.time / 1000) * 100, 100); // 1500秒を最大値として計算
     const batteryProgress = deviceInfo.batteryLevel * 100;
     
@@ -585,13 +597,6 @@ menuButton.addEventListener('click', (e) => {
     e.stopPropagation();
     menuButton.classList.toggle('active');
     informations.classList.toggle('active');
-});
-
-// 閉じるボタンのクリックイベント
-closeMenuButton.addEventListener('click', (e) => {
-    e.stopPropagation();
-    menuButton.classList.remove('active');
-    informations.classList.remove('active');
 });
 
 // メニュー以外の領域をクリックしたときにメニューを閉じる
