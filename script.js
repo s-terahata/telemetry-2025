@@ -475,8 +475,8 @@ function createListItemHtml(deviceInfo, gameInfo, sessionName) {
     const timelineProgress = Math.min((gameInfo.time / 1000) * 100, 100); // 1500秒を最大値として計算
     const batteryProgress = deviceInfo.batteryLevel * 100;
     
-    let itemText = `<div class="no-indent">セッション名: ${sessionName || 'Offline'}</div>`;
-    itemText += `<div class="no-indent">${sequenceName}</div>`;
+    let itemText = `<div class="no-indent"><i class="fas fa-door-open"></i> ${sessionName || 'Offline'}</div>`;
+    itemText += `<div class="no-indent"><i class="fas fa-clapperboard"></i> ${sequenceName}</div>`;
     itemText += `<div class="progress-container">
         <div class="progress-icon"><i class="fas fa-clock"></i></div>
         <div class="progress-bar-container">

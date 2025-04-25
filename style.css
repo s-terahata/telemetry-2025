@@ -208,8 +208,8 @@ body {
 
 #deviceList li {
     background: white;
-    margin: 8px 0;
-    padding: 12px 15px;
+    margin: 1px 0;
+    padding: 1px 12px;
     border: 1px solid #e0e0e0;
     border-radius: 6px;
     transition: all 0.2s ease;
@@ -458,7 +458,7 @@ button.warn:hover {
 
 @media screen and (max-width: 767px) {
     #informations {
-        width: 85%;
+        width: 45%;
         left: -85%;
     }
 
@@ -698,7 +698,7 @@ button.warn:hover {
 /* モバイル向けの調整 */
 @media screen and (max-width: 480px) {
     .custom-dialog {
-        width: 90%;
+        width: 50%;
         padding: 15px;
     }
 
