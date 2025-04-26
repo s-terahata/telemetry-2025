@@ -805,7 +805,7 @@ document.getElementById('startTutorialAllButton').addEventListener('click', () =
 
 // ゲーム開始関数を更新
 function startAllDevices(filteredPlayers) {
-    let playerIdx = 1;
+    let playerIdx = 0;
     filteredPlayers.forEach(userId => {
         const topic = `command/${userId}/start`;
         const payload = JSON.stringify({ playerIndex: playerIdx });
