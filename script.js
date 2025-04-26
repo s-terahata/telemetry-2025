@@ -37,10 +37,11 @@ function getLastThreeDigits(label) {
 }
 
 function getSequenceName(seconds, status) {
-    seconds -= 45; //MainTimelineの開始位置がオフセットされているため
+    if(status > 80)
+        seconds -= 45; //MainTimelineの開始位置がオフセットされているため
 
     if(status == "Playing"){
-    if (seconds <= 83) {
+    if (seconds <= 80) {
         return "チュートリアル";
     } else if (seconds <= 300) {
         return "フリーローム";
@@ -500,7 +501,7 @@ function createListItemHtml(deviceInfo, gameInfo, sessionName) {
     const timelineProgress = Math.min((gameInfo.time / 1000) * 100, 100);
     const batteryProgress = deviceInfo.batteryLevel * 100;
     
-    let itemText = `<div class="no-indent"><i class="fas fa-door-open"></i> ${sessionName || 'Offline'}</div>`;
+    let itemText = `<div class="no-indent"><i class="fas fa-door-open"></i> ${sessionName}</div>`;
     itemText += `<div class="no-indent"><i class="fas fa-clapperboard"></i> ${sequenceName}</div>`;
     itemText += `<div class="progress-container">
         <div class="progress-icon"><i class="fas fa-clock"></i></div>
@@ -540,7 +541,7 @@ function showDeviceInfo(player) {
     info += `<dt>バッテリー状態</dt><dd>${batteryStatusMap[deviceInfo.batteryStatus]}</dd>`;
     info += `<dt>温度状態</dt><dd>${thermalStatusMap[deviceInfo.thermalStatus]}</dd>`;
     info += `<dt>アプリバージョン</dt><dd>${player.appVersion}</dd>`;
-    info += `<dt>セッション名</dt><dd>${player.sessionName || 'Offline'}</dd>`;
+    info += `<dt>セッション名</dt><dd>${player.sessionName}</dd>`;
     body.innerHTML = info;
 
     showPopup();
@@ -596,11 +597,6 @@ function updateSessionList() {
             sessions.add(player.sessionName);
         }
     });
-    
-    // セッションが存在しない場合のみ空のセッションを追加
-    if (sessions.size === 0) {
-        sessions.add('');
-    }
     
     return Array.from(sessions);
 }
@@ -690,7 +686,7 @@ function showConfirmationDialog(message, sessions, callback) {
             <div class="custom-dialog-message">${message}</div>
             <select class="custom-dialog-session-select">
                 <option value="">セッションを選択してください</option>
-                ${sessions.map(session => `<option value="${session}">${session || 'Offline'}</option>`).join('')}
+                ${sessions.map(session => `<option value="${session}">${session}</option>`).join('')}
             </select>
             <div class="device-list-container" style="display: none;">
                 <div class="device-list-title">送信対象デバイス:</div>
@@ -715,7 +711,7 @@ function showConfirmationDialog(message, sessions, callback) {
         // デバイスリストを更新
         deviceList.innerHTML = '';
         const filteredPlayers = Object.entries(players).filter(([_, player]) => 
-            (player.sessionName || '') === selectedSession
+            (player.sessionName) === selectedSession
         );
         
         if (filteredPlayers.length > 0) {
@@ -786,7 +782,7 @@ document.getElementById('startAllButton').addEventListener('click', () => {
     showConfirmationDialog(message, sessions, (confirmed, selectedSessions) => {
         if (confirmed && selectedSessions.length > 0) {
             const filteredPlayers = Object.keys(players).filter(userId => 
-                selectedSessions.includes(players[userId].sessionName || '')
+                selectedSessions.includes(players[userId].sessionName)
             );
             startAllDevices(filteredPlayers);
         }
@@ -800,7 +796,7 @@ document.getElementById('startTutorialAllButton').addEventListener('click', () =
     showConfirmationDialog(message, sessions, (confirmed, selectedSessions) => {
         if (confirmed && selectedSessions.length > 0) {
             const filteredPlayers = Object.keys(players).filter(userId => 
-                selectedSessions.includes(players[userId].sessionName || '')
+                selectedSessions.includes(players[userId].sessionName)
             );
             startTutorialAllDevices(filteredPlayers);
         }
