@@ -48,14 +48,16 @@ function getSequenceName(seconds, status) {
     } else if (seconds >= 301 && seconds <= 380) {
         return "ゆがみ襲来";
     } else if(seconds <= 410) {
-        return "ポータルをつくる";
+        return "ポータルを復活させる";
+    } else if(seconds <= 440) {
+        return "ポータルをくぐる";
     } else if(seconds <= 595) {
         return "ミニライド";
     } else if(seconds < 680) {
         return "ファイナルライド前";
     } else if (seconds <= 860) {
         return "ファイナルライド";
-    } else if (seconds <= 1000) {
+    } else if (seconds <= 990) {
         return "エンディング";
     }
 }
@@ -67,7 +69,8 @@ else
         return "開始コマンド待機中"
     }
 }
-    return "不明なシーケンス";
+
+    return "体験終了";
 }
 
 // バッテリー状態マップ
