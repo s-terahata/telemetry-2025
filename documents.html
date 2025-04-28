@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mirrorge2025 操作マニュアル</title>
+    <title>Mirrorge2025 マニュアル</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
@@ -83,6 +83,7 @@
     <h2><i class="fas fa-list section-icon"></i>目次</h2>
     <ul>
         <li><a href="#game-start">ゲーム開始の流れ</a></li>
+        <li><a href="#timeline">タイムライン</a></li>
         <li><a href="#recovery">復帰の流れ</a></li>
         <li><a href="#end">体験終了の流れ</a></li>
         <li><a href="#marker-placement">フラワーとポータルゲートのマーカー配置</a></li>
@@ -160,7 +161,7 @@
         <h3>注意事項</h3>
         <ul>
             <li>この仕組みにより、強制終了後に復帰しても「時間差でのズレ」が発生しない設計になっています。</li>
-            <li>ただし、再起動後に「間違ったRoomを選択」した場合は正しく復帰できません。</li>
+            <li>再起動後に、前回選択したルームを選択してからContinueボタンを押してください。</li>
         </ul>
     </details>
 </section>
@@ -279,8 +280,8 @@
         <h3>割り当ての仕組み</h3>
         <ul>
             <li>管理ツールから送られる「接続順に割り振られた番号」（0,1,2,…）を、</li>
-            <li>アプリ側では以下のように計算して、PlayerIndexを決定します：
-                <code>PlayerIndex = ReceivedIndex % Treasures.Length;</code>
+            <li>アプリ側では以下のように計算して、PlayerIndexを決定します<br>
+                ：<code>PlayerIndex = ReceivedIndex % Treasures.Length;</code>
             </li>
             <li>つまり、Treasures（宝の種類）は最大6種類（Treasures[0]〜Treasures[5]）用意されており、
                 それをプレイヤー数に関係なく均等に割り当てる仕組みになっています。</li>
