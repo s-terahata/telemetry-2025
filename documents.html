@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mirrorge2025 操作マニュアル</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #f9f9f9;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h1 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        section {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .technical-section {
+            background: #f5f5f5;
+            border-left: 4px solid #3498db;
+        }
+        .technical-section summary {
+            cursor: pointer;
+            padding: 10px;
+            background: #e8f4fc;
+            border-radius: 4px;
+        }
+        .technical-section[open] summary {
+            margin-bottom: 10px;
+        }
+        .technical-section h2 {
+            font-size: 1.1em;
+            color: #666;
+        }
+        .technical-section .section-icon {
+            font-size: 0.9em;
+        }
+        .engineer-label {
+            font-size: 0.8em;
+            color: #999;
+            margin-left: 5px;
+        }
+        .section-icon {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        ul, ol {
+            margin-left: 20px;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        code {
+            background: #eee;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 90%;
+        }
+    </style>
+</head>
+<body>
+
+<h1><i class="fas fa-book section-icon"></i>Mirrorge2025 操作マニュアル</h1>
+
+<section>
+    <h2><i class="fas fa-list section-icon"></i>目次</h2>
+    <ul>
+        <li><a href="#game-start">ゲーム開始の流れ</a></li>
+        <li><a href="#recovery">復帰の流れ</a></li>
+        <li><a href="#end">体験終了の流れ</a></li>
+        <li><a href="#marker-placement">フラワーとポータルゲートのマーカー配置</a></li>
+        <li><a href="#cart-adjustment">カート・ガラス面マーカー位置調整方法</a></li>
+        <li><a href="#marker-coordinates">マーカー共有の仕組み</a></li>
+        <li><a href="#language">言語切り替え</a></li>
+        <li><a href="#links">リンク</a></li>
+        <li><a href="#markers">マーカー一覧</a></li>
+    </ul>
+</section>
+
+<section id="game-start">
+    <h2><i class="fas fa-play-circle section-icon"></i>ゲーム開始の流れ</h2>
+    <ol>
+        <li><strong>[VisionPro] [ホーム画面]</strong> Mirrorge2025を起動</li>
+        <li><strong>[VisionPro] [アプリ立ち上げ時] [初回設定]</strong> トラッキングデータへのアクセス許可</li>
+        <li><strong>[VisionPro] [メニュー画面] [初回設定]</strong> DeviceIDを設定 (例: <code>MO-001</code>)</li>
+        <li><strong>[VisionPro] [メニュー画面]</strong> ルーム選択</li>
+        <li><strong>[VisionPro] [メニュー画面]</strong> NewGameを押してメインシーンへ</li>
+        <li><strong>[管理ツール]</strong> 参加者のオンライン確認</li>
+        <li><strong>[VisionPro]</strong> カートマーカーでキャリブレーション</li>
+        <li><strong>[管理ツール]</strong> 位置の正確さ確認</li>
+        <li><strong>[VisionPro]</strong> カートタッチ → チュートリアル開始</li>
+        <li><strong>[管理ツール]</strong> ステータス変化を確認</li>
+        <li><strong>[管理ツール]</strong> 全員出発後、ゲーム開始コマンド送信</li>
+        <li><strong>[管理ツール]</strong> ステータス"フリーローム"確認</li>
+        <li><strong>[オペレーション]</strong> ポータル誘導</li>
+    </ol>
+</section>
+
+<section id="recovery">
+    <h2><i class="fas fa-redo section-icon"></i>復帰の流れ</h2>
+    <ol>
+        <li><strong>[VisionPro]</strong> アプリ終了確認 → 強制終了</li>
+        <li><strong>[VisionPro]</strong> 再起動 → Room選択 → Continue</li>
+        <li><strong>[VisionPro]</strong> 近くのマーカーで復帰</li>
+        <li><strong>[管理ツール]</strong> ステータス正常確認</li>
+    </ol>
+</section>
+
+<section id="recovery-logic" class="technical-section">
+    <details>
+        <summary><h2><i class="fas fa-cogs section-icon"></i>復帰処理の仕組み<span class="engineer-label">[エンジニア向け]</span></h2></summary>
+        <h3>基本動作</h3>
+        <ul>
+            <li>ゲーム開始時、ゲーム開始時刻（timestamp）をローカルに保存します。</li>
+            <li>何らかの理由でアプリが強制終了した場合でも、この保存済みの開始時刻は保持されています。</li>
+            <li>次回起動時にContinueボタンを押すと、次の処理が行われます：
+                <ol>
+                    <li>保存されていたゲーム開始時刻を読み込みます。</li>
+                    <li>現在時刻との経過時間を計算します。</li>
+                    <li>経過時間ぶん、内部のタイムライン（Timeline, State）を自動的に進行させます。</li>
+                </ol>
+            </li>
+            <li>これにより、ほかの参加者と同じタイミング・進行状況で復帰することができます。</li>
+        </ul>
+
+        <h3>注意事項</h3>
+        <ul>
+            <li>この仕組みにより、強制終了後に復帰しても「時間差でのズレ」が発生しない設計になっています。</li>
+            <li>ただし、再起動後に「間違ったRoomを選択」した場合は正しく復帰できません。</li>
+        </ul>
+    </details>
+</section>
+
+<section id="end">
+    <h2><i class="fas fa-stop-circle section-icon"></i>体験終了の流れ</h2>
+    <ol>
+        <li><strong>[管理ツール]</strong> ステータスが"体験終了"になったことを確認し、お客様からデバイスを受け取る</li>
+    </ol>
+</section>
+
+<section id="marker-placement">
+    <h2><i class="fas fa-map-marker-alt section-icon"></i>フラワーとポータルゲートのマーカー配置</h2>
+    <p>各プレイヤーに異なる場所へ設置可能（最大6人）。</p>
+    <h3>配置方法</h3>
+    <ol>
+        <li>各マーカー（A3サイズ）設置</li>
+        <li>Wi-Fi接続されたVisionProでMirrorge2025起動</li>
+        <li>"Marker Setup"をチェック → NewGame開始</li>
+        <li>カートマーカーでキャリブレーション</li>
+        <li>各マーカーを見て検出確認</li>
+        <li>終了後、アプリを終了</li>
+    </ol>
+</section>
+
+<section id="cart-adjustment">
+    <h2><i class="fas fa-tools section-icon"></i>カート・ガラス面マーカー位置調整方法</h2>
+    <ol>
+        <li>VisionProでNewGame開始</li>
+        <li>DebugMenuでIndoorTestを有効化</li>
+        <li>マーカーを見ながらMoveOriginで調整</li>
+        <li>SaveOriginで保存 → アプリ終了</li>
+    </ol>
+</section>
+
+<section id="marker-coordinates" class="technical-section">
+    <details>
+        <summary><h2><i class="fas fa-database section-icon"></i>マーカー共有の仕組み<span class="engineer-label">[エンジニア向け]</span></h2></summary>
+        <h3>マーカー座標の保存・共有方法</h3>
+        <p>Google Spreadsheet を使って、マーカー座標を全端末で共有しています。</p>
+
+        <h3>保存の流れ（MarkerSetup時）</h3>
+        <ol>
+            <li>MarkerSetupモードで起動すると、</li>
+            <li>設定したマーカー座標を、HTTP POSTリクエストで</li>
+            <li>Google Apps Script (GAS) 経由で、Google Spreadsheetに送信・保存します。</li>
+        </ol>
+
+        <h3>読み込みの流れ（ゲーム起動時）</h3>
+        <ol>
+            <li>ゲーム起動時に、</li>
+            <li>HTTP GETリクエストで、</li>
+            <li>スプレッドシートから最新のマーカー座標を取得（Fetch）します。</li>
+        </ol>
+
+        <h3>キャッシュ（ローカル保存）</h3>
+        <ul>
+            <li>一度取得した座標データは、各端末のPlayerPrefsに保存されます。</li>
+            <li>そのため、次回以降はネットワークに接続していなくても、ローカル保存データで動作します。</li>
+            <li>ただし、初回起動時は必ずネットワーク接続が必要です。</li>
+        </ul>
+
+        <p class="note">✅ 簡単にまとめると：「最初にネットから取得、次からは端末に保存して使う」仕組みです。</p>
+    </details>
+</section>
+
+<section id="language">
+    <h2><i class="fas fa-language section-icon"></i>言語切り替え</h2>
+    <p>メニュー画面で <code>English</code> にチェックを付けると英語版が起動します。</p>
+</section>
+
+<section id="player-index" class="technical-section">
+    <details>
+        <summary><h2><i class="fas fa-users-cog section-icon"></i>PlayerIndexの仕組み<span class="engineer-label">[エンジニア向け]</span></h2></summary>
+        <h3>基本仕様</h3>
+        <ul>
+            <li>各プレイヤーには、0〜5のPlayerIndex（ID）が割り当てられます。</li>
+            <li>7人目以降のプレイヤーには、<strong>6で割った余り（%演算）</strong>を使って、PlayerIndexを決定します。</li>
+            <li>PlayerIndexによって、以下が設定されます：
+                <ul>
+                    <li>どの場所に<strong>宝（treasure_medium, treasure_big）</strong>を配置するか</li>
+                    <li>アバターの色</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>プレイヤーカラー</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin: 10px 0;">
+            <div style="background: rgb(207, 130, 204); padding: 5px; border-radius: 3px; text-align: center; font-size: 0.9em;">
+                <p>Index 0</p>
+                <p style="font-size: 0.8em;">RGB(0.81, 0.51, 0.8)</p>
+            </div>
+            <div style="background: red; padding: 5px; border-radius: 3px; text-align: center; color: white; font-size: 0.9em;">
+                <p>Index 1</p>
+                <p style="font-size: 0.8em;">RGB(1, 0, 0)</p>
+            </div>
+            <div style="background: rgb(0, 189, 207); padding: 5px; border-radius: 3px; text-align: center; font-size: 0.9em;">
+                <p>Index 2</p>
+                <p style="font-size: 0.8em;">RGB(0, 0.74, 0.81)</p>
+            </div>
+            <div style="background: green; padding: 5px; border-radius: 3px; text-align: center; color: white; font-size: 0.9em;">
+                <p>Index 3</p>
+                <p style="font-size: 0.8em;">RGB(0, 1, 0)</p>
+            </div>
+            <div style="background: rgb(128, 128, 128); padding: 5px; border-radius: 3px; text-align: center; color: white; font-size: 0.9em;">
+                <p>Index 4</p>
+                <p style="font-size: 0.8em;">RGB(0.5, 0.5, 0.5)</p>
+            </div>
+            <div style="background: blue; padding: 5px; border-radius: 3px; text-align: center; color: white; font-size: 0.9em;">
+                <p>Index 5</p>
+                <p style="font-size: 0.8em;">RGB(0, 0, 1)</p>
+            </div>
+        </div>
+
+        <h3>割り当ての仕組み</h3>
+        <ul>
+            <li>管理ツールから送られる「接続順に割り振られた番号」（0,1,2,…）を、</li>
+            <li>アプリ側では以下のように計算して、PlayerIndexを決定します：
+                <code>PlayerIndex = ReceivedIndex % Treasures.Length;</code>
+            </li>
+            <li>つまり、Treasures（宝の種類）は最大6種類（Treasures[0]〜Treasures[5]）用意されており、
+                それをプレイヤー数に関係なく均等に割り当てる仕組みになっています。</li>
+        </ul>
+
+        <h3>まとめ</h3>
+        <ul>
+            <li>1〜6人ならそのまま0〜5に順番に割り当て。</li>
+            <li>7人目以降は、もう一度0から繰り返して割り当て。</li>
+        </ul>
+    </details>
+</section>
+
+<section id="links">
+    <h2><i class="fas fa-link section-icon"></i>リンク</h2>
+    <ul>
+        <li><a href="https://s-terahata.github.io/telemetry-2025/" target="_blank">Mirrorge25 管理ツール</a>（本番用サーバーに移行予定）</li>
+    </ul>
+</section>
+
+<section id="markers">
+    <h2><i class="fas fa-images section-icon"></i>マーカー一覧</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;">
+        <div>
+            <h3>カートマーカー</h3>
+            <img src="images/a_689.png" alt="cart_marker" style="width: 100px; height: auto;">
+            <p>a_689</p>
+        </div>
+        <div>
+            <h3>ガラス面マーカー</h3>
+            <img src="images/b_689.png" alt="glass_marker" style="width: 100px; height: auto;">
+            <p>b_689</p>
+        </div>
+        <div>
+            <h3>ポータル</h3>
+            <img src="images/portal.png" alt="portal" style="width: 100px; height: auto;">
+            <p>portal</p>
+        </div>
+        <div>
+            <h3>ミドルフラワー1</h3>
+            <img src="images/treasure_medium_1.png" alt="treasure_medium_1" style="width: 100px; height: auto;">
+            <p>treasure_medium_1</p>
+        </div>
+        <div>
+            <h3>ミドルフラワー2</h3>
+            <img src="images/treasure_medium_2.png" alt="treasure_medium_2" style="width: 100px; height: auto;">
+            <p>treasure_medium_2</p>
+        </div>
+        <div>
+            <h3>ミドルフラワー3</h3>
+            <img src="images/treasure_medium_3.png" alt="treasure_medium_3" style="width: 100px; height: auto;">
+            <p>treasure_medium_3</p>
+        </div>
+        <div>
+            <h3>ミドルフラワー4</h3>
+            <img src="images/treasure_medium_4.png" alt="treasure_medium_4" style="width: 100px; height: auto;">
+            <p>treasure_medium_4</p>
+        </div>
+        <div>
+            <h3>ミドルフラワー5</h3>
+            <img src="images/treasure_medium_5.png" alt="treasure_medium_5" style="width: 100px; height: auto;">
+            <p>treasure_medium_5</p>
+        </div>
+        <div>
+            <h3>ミドルフラワー6</h3>
+            <img src="images/treasure_medium_6.png" alt="treasure_medium_6" style="width: 100px; height: auto;">
+            <p>treasure_medium_6</p>
+        </div>
+        <div>
+            <h3>ビッグフラワー1</h3>
+            <img src="images/treasure_big_1.jpg" alt="treasure_big_1" style="width: 100px; height: auto;">
+            <p>treasure_big_1</p>
+        </div>
+        <div>
+            <h3>ビッグフラワー2</h3>
+            <img src="images/treasure_big_2.png" alt="treasure_big_2" style="width: 100px; height: auto;">
+            <p>treasure_big_2</p>
+        </div>
+        <div>
+            <h3>ビッグフラワー3</h3>
+            <img src="images/treasure_big_3.png" alt="treasure_big_3" style="width: 100px; height: auto;">
+            <p>treasure_big_3</p>
+        </div>
+        <div>
+            <h3>ビッグフラワー4</h3>
+            <img src="images/treasure_big_4.png" alt="treasure_big_4" style="width: 100px; height: auto;">
+            <p>treasure_big_4</p>
+        </div>
+        <div>
+            <h3>ビッグフラワー5</h3>
+            <img src="images/treasure_big_5.png" alt="treasure_big_5" style="width: 100px; height: auto;">
+            <p>treasure_big_5</p>
+        </div>
+        <div>
+            <h3>ビッグフラワー6</h3>
+            <img src="images/treasure_big_6.png" alt="treasure_big_6" style="width: 100px; height: auto;">
+            <p>treasure_big_6</p>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

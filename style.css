@@ -125,6 +125,18 @@ body {
     padding-right: 40px;
 }
 
+.doc-link {
+    color: #666;
+    text-decoration: none;
+    font-size: 20px;
+    padding: 5px;
+    transition: color 0.2s ease;
+}
+
+.doc-link:hover {
+    color: #333;
+}
+
 .close-button {
     position: absolute;
     right: 0;
