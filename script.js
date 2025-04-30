@@ -279,7 +279,7 @@ function onMessageArrived(message) {
     const userId = telemetry.deviceInfo.deviceUniqueIdentifier;
 
     // 開発者モードがOFFの時は、開発版デバイスのメッセージを無視
-    if (!isDevMode && telemetry.appVersion.includes("Dev")) {
+    if (!isDevMode && !telemetry.appVersion.includes("Pro")) {
         // 既に表示されているデバイスなら削除
         if (players[userId]) {
             removePlayer(userId);
