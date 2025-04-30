@@ -131,6 +131,11 @@ body {
     font-size: 20px;
     padding: 5px;
     transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    width: 30px;
 }
 
 .doc-link:hover {
@@ -899,4 +904,38 @@ button.warn:hover {
     .progress-value {
         font-size: 14px;
     }
+}
+
+.hidden {
+    display: none;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.dev-mode-button {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 20px;
+    padding: 5px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    width: 30px;
+    margin: 0;
+}
+
+.dev-mode-button:hover {
+    color: #333;
+}
+
+.dev-mode-button.active {
+    color: #2196F3;
 }

@@ -278,6 +278,15 @@ function onMessageArrived(message) {
     const telemetry = JSON.parse(message.payloadString);
     const userId = telemetry.deviceInfo.deviceUniqueIdentifier;
 
+    // 開発者モードがOFFの時は、開発版デバイスのメッセージを無視
+    if (!isDevMode && telemetry.appVersion.includes("Dev")) {
+        // 既に表示されているデバイスなら削除
+        if (players[userId]) {
+            removePlayer(userId);
+        }
+        return;
+    }
+
     // プレイヤーのタイムアウトタイマーをリセットまたは開始
     resetTimeoutTimer(userId);
 
@@ -829,3 +838,17 @@ function startTutorialAllDevices(filteredPlayers) {
         playerIdx++;
     });
 }
+
+// 開発者モード関連の要素を取得
+const toggleDevModeButton = document.getElementById('toggleDevMode');
+const startTutorialAllButton = document.getElementById('startTutorialAllButton');
+
+// 開発者モードの状態を管理
+let isDevMode = false;
+
+// 開発者モードの切り替え
+toggleDevModeButton.addEventListener('click', () => {
+    isDevMode = !isDevMode;
+    toggleDevModeButton.classList.toggle('active', isDevMode);
+    startTutorialAllButton.classList.toggle('hidden', !isDevMode);
+});

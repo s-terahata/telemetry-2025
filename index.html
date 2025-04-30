@@ -20,12 +20,17 @@
     <div id="informations" class="information">
         <div class="menu-header">
             <h2>Mirrorge25 管理ツール</h2>
-            <a href="documents.html" class="doc-link"><i class="fas fa-book"></i></a>
+            <div class="header-buttons">
+                <button id="toggleDevMode" class="dev-mode-button" title="開発者モード">
+                    <i class="fas fa-code"></i>
+                </button>
+                <a href="documents.html" class="doc-link"><i class="fas fa-book"></i></a>
+            </div>
         </div>
         <div id="status">管理サーバーに接続中...</div>
         <h2 id="coordinates">接続中デバイス: 0</h2>
         <div class="button-group">
-            <button id="startTutorialAllButton" class="info">チュートリアルを強制開始</button>
+            <button id="startTutorialAllButton" class="info hidden">チュートリアルを強制開始</button>
             <button id="startAllButton" class="info">ゲーム開始</button>
         </div>
         <div id="devicesArea">
