@@ -304,6 +304,7 @@ function onMessageArrived(message) {
     const rotation = telemetry.angle + rotOffsetY;
 
     if (!players[userId]) {
+        const nextNumber = getNextPlayerNumber();
         playerCount++;
         updatePlayerCountUI();
 
@@ -317,7 +318,7 @@ function onMessageArrived(message) {
         // プレイヤー番号をマーカーに追加
         const playerNumber = document.createElement('div');
         playerNumber.className = 'player-number';
-        playerNumber.innerText = playerCount;
+        playerNumber.innerText = nextNumber;
         marker.appendChild(playerNumber);
         playerNumber.style.transform = `translate(-50%, -50%) rotate(${-rotation}deg)`;
 
@@ -335,7 +336,7 @@ function onMessageArrived(message) {
         map.appendChild(marker);
 
         // リストにデバイス情報を追加
-        const listItem = createListItem(playerCount, telemetry.deviceInfo, telemetry.gameInfo, telemetry.sessionName);
+        const listItem = createListItem(nextNumber, telemetry.deviceInfo, telemetry.gameInfo, telemetry.sessionName);
         // リストアイテムのクリック処理
         listItem.addEventListener('click', () => {
             onSelectDevice(userId, telemetry.deviceInfo);
@@ -343,7 +344,7 @@ function onMessageArrived(message) {
         deviceList.appendChild(listItem);
 
         // プレイヤー情報を更新
-        players[userId] = { number: playerCount, marker, listItem, x, y, rotation, deviceInfo: telemetry.deviceInfo, appVersion: telemetry.appVersion, sessionName: telemetry.sessionName };
+        players[userId] = { number: nextNumber, marker, listItem, x, y, rotation, deviceInfo: telemetry.deviceInfo, appVersion: telemetry.appVersion, sessionName: telemetry.sessionName };
         updateSessionList(); // セッションリストを更新
     } else {
         // 既存プレイヤーの情報を更新
@@ -852,3 +853,13 @@ toggleDevModeButton.addEventListener('click', () => {
     toggleDevModeButton.classList.toggle('active', isDevMode);
     startTutorialAllButton.classList.toggle('hidden', !isDevMode);
 });
+
+// プレイヤー番号の重複を防ぐ関数
+function getNextPlayerNumber() {
+    const usedNumbers = new Set(Object.values(players).map(p => p.number));
+    let num = 1;
+    while (usedNumbers.has(num)) {
+        num++;
+    }
+    return num;
+}
