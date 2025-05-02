@@ -45,9 +45,9 @@ function getSequenceName(seconds, status) {
         return "チュートリアル";
     } else if (seconds <= 300) {
         return "フリーローム";
-    } else if (seconds >= 301 && seconds <= 380) {
+    } else if (seconds >= 310 && seconds <= 380) {
         return "ゆがみ襲来";
-    } else if(seconds <= 410) {
+    } else if(seconds <= 416) {
         return "ポータルを復活させる";
     } else if(seconds <= 440) {
         return "ポータルをくぐる";
@@ -57,7 +57,7 @@ function getSequenceName(seconds, status) {
         return "ファイナルライド前";
     } else if (seconds <= 860) {
         return "ファイナルライド";
-    } else if (seconds <= 990) {
+    } else if (seconds <= 1015) {
         return "エンディング";
     }
 }
@@ -416,7 +416,7 @@ function resetTimeoutTimer(userId) {
     }
     timeoutTimers[userId] = setTimeout(() => {
         removePlayer(userId);
-    }, 20000); // 10秒
+    }, 10000); // 10秒
 }
 
 // プレイヤーの削除
