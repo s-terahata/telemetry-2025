@@ -37,8 +37,8 @@ function getLastThreeDigits(label) {
 }
 
 function getSequenceName(seconds, status) {
-    if(status > 80)
-        seconds -= 45; //MainTimelineの開始位置がオフセットされているため
+    if(status == "Playing" && seconds > 80)
+        seconds -= 35; //MainTimelineの開始位置がオフセットされているため
 
     if(status == "Playing"){
     if (seconds <= 80) {
