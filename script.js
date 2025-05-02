@@ -57,7 +57,7 @@ function getSequenceName(seconds, status) {
         return "ファイナルライド前";
     } else if (seconds <= 860) {
         return "ファイナルライド";
-    } else if (seconds <= 1015) {
+    } else if (seconds <= 1010) {
         return "エンディング";
     }
 }
