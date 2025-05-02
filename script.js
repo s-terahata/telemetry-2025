@@ -511,7 +511,7 @@ function updateListItem(listItem, deviceInfo, gameInfo, sessionName) {
 // リストアイテムのHTML生成
 function createListItemHtml(deviceInfo, gameInfo, sessionName) {
     const sequenceName = getSequenceName(gameInfo.time, gameInfo.status);
-    const timelineProgress = Math.min((gameInfo.time / 1000) * 100, 100);
+    const timelineProgress = Math.min((gameInfo.time / 1045) * 100, 100);
     const batteryProgress = deviceInfo.batteryLevel * 100;
     
     let itemText = `<div class="no-indent"><i class="fas fa-door-open"></i> ${sessionName}</div>`;
