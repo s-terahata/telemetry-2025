@@ -233,7 +233,7 @@ function publishMessage(topic, payload) {
 function onConnect() {
     console.log("管理サーバーに接続しました");
     statusDiv.innerHTML = "管理サーバーに接続しました";
-    client.subscribe(subscribeTopic);
+    client.subscribe(subscribeTopic, { qos: 1 });
 }
 
 // 接続失敗時の処理
