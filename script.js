@@ -37,13 +37,19 @@ function getLastThreeDigits(label) {
 }
 
 function getSequenceName(seconds, status) {
-    if(status == "Playing" && seconds > 80)
-        seconds -= 35; //MainTimelineの開始位置がオフセットされているため
 
     if(status == "Playing"){
-    if (seconds <= 80) {
-        return "チュートリアル";
-    } else if (seconds <= 300) {
+        if (seconds <= 80) {
+            return "チュートリアル";
+        }
+        else if (seconds > 80)
+        {
+            seconds -= 35;//MainTimelineの開始位置がオフセットされているため
+        }
+    }
+    
+    if(status == "Playing"){
+    if (seconds <= 300) {
         return "フリーローム";
     } else if (seconds >= 310 && seconds <= 380) {
         return "ゆがみ襲来";
