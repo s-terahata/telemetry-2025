@@ -242,13 +242,41 @@ function onFailure(responseObject) {
     statusDiv.innerHTML = "管理サーバーへの接続に失敗しました: " + responseObject.errorMessage;
 }
 
+// 接続状態を確認する関数
+function checkConnection() {
+    console.log("接続状態を確認します");
+    console.log("MQTTクライアントの接続状態:", client.isConnected());
+    
+    // 接続が切れている場合のみリロード
+    if (!client.isConnected()) {
+        console.log("MQTT接続が切れているため、リロードを実行します");
+        try {
+            // 明示的にMQTT接続を切断
+            if (client.isConnected()) {
+                client.disconnect();
+            }
+            // 強制的にリロード
+            window.location.reload(true);
+        } catch (error) {
+            console.error("リロード中にエラーが発生:", error);
+            // エラーが発生しても強制的にリロード
+            window.location.reload(true);
+        }
+    }
+}
+
 // 接続切断時の処理
 function onConnectionLost(responseObject) {
+    console.log("onConnectionLost called", responseObject);
     if (responseObject.errorCode !== 0) {
         console.log("接続が失われました: " + responseObject.errorMessage);
-        statusDiv.innerHTML = "接続が失われました: " + responseObject.errorMessage;
-        // 再接続を試みる
-        attemptReconnect();
+        statusDiv.innerHTML = "接続が失われました。ページを再読み込みします...";
+        // 明示的にMQTT接続を切断
+        if (client.isConnected()) {
+            client.disconnect();
+        }
+        // 強制的にリロード
+        window.location.reload(true);
     }
 }
 
@@ -863,3 +891,31 @@ function getNextPlayerNumber() {
     }
     return num;
 }
+
+// ネットワーク接続状態の監視
+window.addEventListener('offline', function(e) {
+    console.log('ネットワーク接続が切断されました', e);
+    statusDiv.innerHTML = "ネットワーク接続が切断されました。接続復帰時にページを再読み込みします...";
+    // 明示的にMQTT接続を切断
+    if (client.isConnected()) {
+        client.disconnect();
+    }
+});
+
+window.addEventListener('online', function(e) {
+    console.log('ネットワーク接続が復帰しました', e);
+    // 接続状態を確認
+    checkConnection();
+});
+
+// ページの可視性変更を監視
+document.addEventListener('visibilitychange', function() {
+    console.log('ページの可視性が変更されました:', document.visibilityState);
+    if (document.visibilityState === 'visible') {
+        // 接続状態を確認
+        checkConnection();
+    }
+});
+
+// 定期的な接続状態チェック
+setInterval(checkConnection, 10000); // 10秒ごとにチェック
